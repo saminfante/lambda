@@ -35,13 +35,14 @@ public final class RateLimitedIterationMatcher<A> extends TypeSafeMatcher<Iterab
     protected boolean matchesSafely(Iterable<A> xs) {
         xs.forEach(__ -> clock.saveLastInstant());
 
-        Boolean enoughDelay = all(d -> d.toNanos() > delay.toNanos(), map(boundaries -> {
+        Iterable<Iterable<Instant>> instantWindows = slide(2, map(instants -> instants.iterator().next(), inGroupsOf(limit.intValue(), clock.instants())));
+        Iterable<Duration> durations = map(boundaries -> {
             Iterator<Instant> it = boundaries.iterator();
             Instant first = it.next();
             Instant second = it.next();
             return between(first, second);
-        }, slide(2, map(instants -> instants.iterator().next(), inGroupsOf(limit.intValue(), clock.instants())))));
-
+        }, instantWindows);
+        Boolean enoughDelay = all(d -> d.toNanos() > delay.toNanos(), durations);
         Boolean sameElements = all(Eq.<A>eq().uncurry(), zip(elements, xs));
 
         return enoughDelay && sameElements;

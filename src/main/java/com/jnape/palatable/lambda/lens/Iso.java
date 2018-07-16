@@ -313,7 +313,13 @@ public interface Iso<S, T, A, B> extends LensLike<S, T, A, B, Iso> {
          */
         @SuppressWarnings("unchecked")
         static <S, A> Iso.Simple<S, A> adapt(Iso<S, S, A, A> iso) {
-            return iso::apply;
+            return new Iso.Simple<S, A>() {
+                @Override
+                public <P extends Profunctor, F extends Functor, FB extends Functor<A, F>, FT extends Functor<S, F>, PAFB extends Profunctor<A, FB, P>, PSFT extends Profunctor<S, FT, P>> PSFT apply(
+                        PAFB pafb) {
+                    return iso.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
+                }
+            };
         }
     }
 }

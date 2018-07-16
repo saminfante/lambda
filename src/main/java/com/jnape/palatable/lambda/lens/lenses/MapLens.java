@@ -167,7 +167,10 @@ public final class MapLens {
      */
     @Deprecated
     public static <K, V, V2> Lens.Simple<Map<K, V>, Map<K, V2>> mappingValues(Function<? super V, ? extends V2> fn) {
-        return simpleLens(m -> toMap(HashMap::new, map(t -> t.biMapR(fn), map(Tuple2::fromEntry, m.entrySet()))),
+        return simpleLens(m -> {
+                              Function<Map.Entry<K, V>, Tuple2<K, V>> tuples = Tuple2::<K, V>fromEntry;
+                              return toMap(HashMap::new, map(t -> t.fmap(fn), map(tuples, m.entrySet())));
+                          },
                           (s, b) -> {
                               Set<K> retainKeys = Filter.<Map.Entry<K, V>>filter(kv -> eq(fn.apply(kv.getValue()), b.get(kv.getKey())))
                                       .andThen(map(Map.Entry::getKey))
@@ -192,7 +195,10 @@ public final class MapLens {
      * @return a lens that focuses on a map while mapping its values
      */
     public static <K, V, V2> Lens.Simple<Map<K, V>, Map<K, V2>> mappingValues(Iso<V, V, V2, V2> iso) {
-        return simpleLens(m -> toMap(HashMap::new, map(t -> t.biMapR(view(iso)), map(Tuple2::fromEntry, m.entrySet()))),
+        return simpleLens(m -> {
+                              Iterable<Tuple2<K, V>> tuples = map(Tuple2::fromEntry, m.entrySet());
+                              return toMap(HashMap::new, map(t -> t.fmap(view(iso)), tuples));
+                          },
                           (s, b) -> view(mappingValues(iso.mirror()), b));
     }
 }
