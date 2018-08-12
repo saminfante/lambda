@@ -1,7 +1,7 @@
 package com.jnape.palatable.lambda.functions;
 
 import com.jnape.palatable.lambda.functor.Applicative;
-import com.jnape.palatable.lambda.functor.Profunctor;
+import com.jnape.palatable.lambda.functor.Contravariant;
 import com.jnape.palatable.lambda.monad.Monad;
 
 import java.util.function.BiFunction;
@@ -9,7 +9,6 @@ import java.util.function.Function;
 
 import static com.jnape.palatable.lambda.functions.Fn2.fn2;
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
-import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
 
 /**
  * A function taking a single argument. This is the core function type that all other function types extend and
@@ -19,8 +18,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @param <B> The result type
  */
 @FunctionalInterface
-public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>,
-        Profunctor<A, B, Fn1<A, ?>, Fn1<?, B>, Fn1<?, ?>>, Function<A, B> {
+public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Contravariant<A, Fn1<?, B>>, Function<A, B> {
 
     /**
      * Invoke this function with the given argument.
@@ -109,51 +107,11 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>,
     }
 
     /**
-     * Contravariantly map over the argument to this function, producing a function that takes the new argument type,
-     * and produces the same result.
-     *
-     * @param <Z> the new argument type
-     * @param fn  the contravariant argument mapping function
-     * @return an {@link Fn1}&lt;Z, B&gt;
-     */
-    @Override
-    default <Z> Fn1<Z, B> diMapL(Function<? super Z, ? extends A> fn) {
-        return Profunctor.super.<Z>diMapL(fn).downcast();
-    }
-
-    /**
-     * Covariantly map over the return value of this function, producing a function that takes the same argument, and
-     * produces the new result type.
-     *
-     * @param <C> the new result type
-     * @param fn  the covariant result mapping function
-     * @return an {@link Fn1}&lt;A, C&gt;
-     */
-    @Override
-    default <C> Fn1<A, C> diMapR(Function<? super B, ? extends C> fn) {
-        return diMap(id(), fn);
-    }
-
-    /**
-     * Exercise both <code>diMapL</code> and <code>diMapR</code> over this function in the same invocation.
-     *
-     * @param <Z> the new argument type
-     * @param <C> the new result type
-     * @param lFn the contravariant argument mapping function
-     * @param rFn the covariant result mapping function
-     * @return an {@link Fn1}&lt;Z, C&gt;
-     */
-    @Override
-    default <Z, C> Fn1<Z, C> diMap(Function<? super Z, ? extends A> lFn, Function<? super B, ? extends C> rFn) {
-        return lFn.andThen(this).andThen(rFn)::apply;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     default <Z> Fn1<Z, B> contraMap(Function<? super Z, ? extends A> fn) {
-        return Profunctor.super.<Z>contraMap(fn).downcast();
+        return fn.andThen(this)::apply;
     }
 
     /**

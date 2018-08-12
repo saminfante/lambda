@@ -25,15 +25,6 @@ public class Fn1Test {
     }
 
     @Test
-    public void profunctorProperties() {
-        Fn1<Integer, Integer> add2 = integer -> integer + 2;
-
-        assertEquals((Integer) 3, add2.<String>diMapL(Integer::parseInt).apply("1"));
-        assertEquals("3", add2.diMapR(Object::toString).apply(1));
-        assertEquals("3", add2.<String, String>diMap(Integer::parseInt, Object::toString).apply("1"));
-    }
-
-    @Test
     public void fn1() {
         Function<String, Integer> parseInt = Integer::parseInt;
         assertEquals((Integer) 1, Fn1.fn1(parseInt).apply("1"));

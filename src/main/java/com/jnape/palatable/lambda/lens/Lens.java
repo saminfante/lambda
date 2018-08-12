@@ -170,22 +170,6 @@ public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
     }
 
     @Override
-    default <R> Lens<R, T, A, B> diMapL(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>diMapL(fn).downcast();
-    }
-
-    @Override
-    default <U> Lens<S, U, A, B> diMapR(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>diMapR(fn).downcast();
-    }
-
-    @Override
-    default <R, U> Lens<R, U, A, B> diMap(Function<? super R, ? extends S> lFn,
-                                          Function<? super T, ? extends U> rFn) {
-        return LensLike.super.<R, U>diMap(lFn, rFn).downcast();
-    }
-
-    @Override
     default <R> Lens<R, T, A, B> contraMap(Function<? super R, ? extends S> fn) {
         return LensLike.super.<R>contraMap(fn).downcast();
     }
@@ -323,11 +307,17 @@ public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
          * @param lens the lens
          * @param <S>  S/T
          * @param <A>  A/B
-         * @return the simple lens
+         * @return the simple lens—
          */
         @SuppressWarnings("unchecked")
         static <S, A> Lens.Simple<S, A> adapt(Lens<S, S, A, A> lens) {
-            return lens::apply;
+            return new Lens.Simple<S, A>() {
+                @Override
+                public <F extends Functor, FT extends Functor<S, F>, FB extends Functor<A, F>> FT apply(
+                        Function<? super A, ? extends FB> fn, S s) {
+                    return lens.apply(fn, s);
+                }
+            };
         }
 
         /**

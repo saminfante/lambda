@@ -14,7 +14,6 @@ import java.util.function.Function;
  * @param <A> The type of the parameter
  * @param <F> The unification parameter
  * @see Bifunctor
- * @see Profunctor
  * @see Fn1
  * @see com.jnape.palatable.lambda.adt.hlist.Tuple2
  * @see com.jnape.palatable.lambda.adt.Either

@@ -1,6 +1,7 @@
 package com.jnape.palatable.lambda.functor.builtin;
 
-import com.jnape.palatable.lambda.functor.Profunctor;
+import com.jnape.palatable.lambda.functor.Contravariant;
+import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.lens.Iso;
 
 import java.util.function.Function;
@@ -13,7 +14,9 @@ import java.util.function.Function;
  * @param <S> the larger viewing value of an {@link Iso}
  * @param <T> the larger viewed value of an {@link Iso}
  */
-public final class Exchange<A, B, S, T> implements Profunctor<S, T, Exchange<A, B, S, ?>, Exchange<A, B, ?, T>, Exchange<A, B, ?, ?>> {
+public final class Exchange<A, B, S, T> implements
+        Functor<T, Exchange<A, B, S, ?>>,
+        Contravariant<S, Exchange<A, B, ?, T>> {
     private final Function<? super S, ? extends A> sa;
     private final Function<? super B, ? extends T> bt;
 
@@ -31,26 +34,12 @@ public final class Exchange<A, B, S, T> implements Profunctor<S, T, Exchange<A, 
     }
 
     @Override
-    public <Z, C> Exchange<A, B, Z, C> diMap(Function<? super Z, ? extends S> lFn,
-                                             Function<? super T, ? extends C> rFn) {
-        return new Exchange<>(lFn.andThen(sa), bt.andThen(rFn));
+    public <U> Exchange<A, B, S, U> fmap(Function<? super T, ? extends U> fn) {
+        return new Exchange<>(sa, bt.andThen(fn));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <Z> Exchange<A, B, Z, T> diMapL(Function<? super Z, ? extends S> fn) {
-        return (Exchange<A, B, Z, T>) Profunctor.super.diMapL(fn);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <C> Exchange<A, B, S, C> diMapR(Function<? super T, ? extends C> fn) {
-        return (Exchange<A, B, S, C>) Profunctor.super.diMapR(fn);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <Z> Exchange<A, B, Z, T> contraMap(Function<? super Z, ? extends S> fn) {
-        return (Exchange<A, B, Z, T>) Profunctor.super.contraMap(fn);
+    public <R> Exchange<A, B, R, T> contraMap(Function<? super R, ? extends S> fn) {
+        return new Exchange<>(sa.compose(fn), bt);
     }
 }

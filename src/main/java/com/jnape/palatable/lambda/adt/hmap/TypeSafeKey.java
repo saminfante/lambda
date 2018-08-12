@@ -1,8 +1,8 @@
 package com.jnape.palatable.lambda.adt.hmap;
 
 import com.jnape.palatable.lambda.functor.Applicative;
+import com.jnape.palatable.lambda.functor.Contravariant;
 import com.jnape.palatable.lambda.functor.Functor;
-import com.jnape.palatable.lambda.functor.Profunctor;
 import com.jnape.palatable.lambda.lens.Iso;
 import com.jnape.palatable.lambda.lens.LensLike;
 
@@ -28,9 +28,9 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
         Iso.Simple<A, B> discarded = Iso.Simple.super.discardR(appB);
         return new TypeSafeKey<A, B>() {
             @Override
-            public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<A, F>, PAFB extends Profunctor<B, FB, ?, ?, P>, PSFT extends Profunctor<A, FT, ?, ?, P>> PSFT apply(
+            public <Profunctor extends Contravariant<?, ?> & Functor<?, ?>, F extends Functor, FB extends Functor<B, F>, FT extends Functor<A, F>, PAFB extends Contravariant<B, ? extends Profunctor> & Functor<FB, ? extends Profunctor>, PSFT extends Contravariant<A, ? extends Profunctor> & Functor<FT, ? extends Profunctor>> PSFT apply(
                     PAFB pafb) {
-                return discarded.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
+                return discarded.<Profunctor, F, FB, FT, PAFB, PSFT>apply(pafb);
             }
 
             @Override
@@ -64,9 +64,9 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
         Iso.Simple<A, C> composed = Iso.Simple.super.andThen(f);
         return new TypeSafeKey<A, C>() {
             @Override
-            public <P extends Profunctor, F extends Functor, FB extends Functor<C, F>, FT extends Functor<A, F>, PAFB extends Profunctor<C, FB, ?, ?, P>, PSFT extends Profunctor<A, FT, ?, ?, P>> PSFT apply(
+            public <Profunctor extends Contravariant<?, ?> & Functor<?, ?>, F extends Functor, FB extends Functor<C, F>, FT extends Functor<A, F>, PAFB extends Contravariant<C, ? extends Profunctor> & Functor<FB, ? extends Profunctor>, PSFT extends Contravariant<A, ? extends Profunctor> & Functor<FT, ? extends Profunctor>> PSFT apply(
                     PAFB pafb) {
-                return composed.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
+                return composed.<Profunctor, F, FB, FT, PAFB, PSFT>apply(pafb);
             }
 
             @Override
@@ -102,10 +102,9 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
      * @param <A> The type of the value that this key maps to inside an {@link HMap}
      */
     interface Simple<A> extends TypeSafeKey<A, A> {
-
         @Override
         @SuppressWarnings("unchecked")
-        default <P extends Profunctor, F extends Functor, FB extends Functor<A, F>, FT extends Functor<A, F>, PAFB extends Profunctor<A, FB, ?, ?, P>, PSFT extends Profunctor<A, FT, ?, ?, P>> PSFT apply(
+        default <Profunctor extends Contravariant<?, ?> & Functor<?, ?>, F extends Functor, FB extends Functor<A, F>, FT extends Functor<A, F>, PAFB extends Contravariant<A, ? extends Profunctor> & Functor<FB, ? extends Profunctor>, PSFT extends Contravariant<A, ? extends Profunctor> & Functor<FT, ? extends Profunctor>> PSFT apply(
                 PAFB pafb) {
             return (PSFT) pafb;
         }

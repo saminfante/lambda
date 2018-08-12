@@ -36,14 +36,6 @@ public interface Predicate<A> extends Fn1<A, Boolean>, java.util.function.Predic
      * {@inheritDoc}
      */
     @Override
-    default <Z> Predicate<Z> diMapL(Function<? super Z, ? extends A> fn) {
-        return Fn1.super.diMapL(fn)::apply;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     default <Z> Predicate<Z> contraMap(Function<? super Z, ? extends A> fn) {
         return Fn1.super.contraMap(fn)::apply;
     }

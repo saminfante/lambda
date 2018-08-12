@@ -1,8 +1,8 @@
 package testsupport;
 
 import com.jnape.palatable.lambda.functor.Applicative;
+import com.jnape.palatable.lambda.functor.Contravariant;
 import com.jnape.palatable.lambda.functor.Functor;
-import com.jnape.palatable.lambda.functor.Profunctor;
 import com.jnape.palatable.lambda.lens.Iso;
 import com.jnape.palatable.lambda.lens.LensLike;
 import com.jnape.palatable.lambda.monad.Monad;
@@ -25,9 +25,9 @@ public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     }
 
     @Override
-    public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Profunctor<A, FB, ?, ?, P>, PSFT extends Profunctor<S, FT, ?, ?, P>> PSFT apply(
+    public <Profunctor extends Contravariant<?, ?> & Functor<?, ?>, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Contravariant<A, ? extends Profunctor> & Functor<FB, ? extends Profunctor>, PSFT extends Contravariant<S, ? extends Profunctor> & Functor<FT, ? extends Profunctor>> PSFT apply(
             PAFB pafb) {
-        return iso.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
+        return iso.<Profunctor, F, FB, FT, PAFB, PSFT>apply(pafb);
     }
 
     @Override

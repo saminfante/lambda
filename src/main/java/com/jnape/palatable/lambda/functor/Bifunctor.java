@@ -13,7 +13,6 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @param <B>  The type of the right parameter
  * @param <BF> The unification parameter
  * @see Functor
- * @see Profunctor
  * @see com.jnape.palatable.lambda.adt.hlist.Tuple2
  */
 @FunctionalInterface

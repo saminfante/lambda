@@ -66,14 +66,6 @@ public interface Kleisli<A, B, M extends Monad, MB extends Monad<B, M>> extends 
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    default <Z> Kleisli<Z, B, M, MB> diMapL(Function<? super Z, ? extends A> fn) {
-        return Fn1.super.diMapL(fn)::apply;
-    }
-
-    /**
      * Adapt a compatible function into a {@link Kleisli} arrow.
      *
      * @param fn   the function

@@ -13,7 +13,6 @@ public class EffectTest {
     @SuppressWarnings("unused")
     public void covariantReturns() {
         Effect<String> effect = noop();
-        Effect<Object> diMapL = effect.diMapL(constantly("1"));
         Effect<Object> contraMap = effect.contraMap(constantly("1"));
         Effect<Object> compose = effect.compose(constantly("1"));
         Effect<String> stringEffect = effect.discardR(constantly("1"));

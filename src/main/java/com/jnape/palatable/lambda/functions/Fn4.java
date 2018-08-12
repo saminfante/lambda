@@ -104,11 +104,6 @@ public interface Fn4<A, B, C, D, E> extends Fn3<A, B, C, Fn1<D, E>> {
     }
 
     @Override
-    default <Z> Fn4<Z, B, C, D, E> diMapL(Function<? super Z, ? extends A> fn) {
-        return fn4(Fn3.super.diMapL(fn));
-    }
-
-    @Override
     default <Z> Fn4<Z, B, C, D, E> contraMap(Function<? super Z, ? extends A> fn) {
         return fn4(Fn3.super.contraMap(fn));
     }

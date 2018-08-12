@@ -12,7 +12,6 @@ import java.util.function.Function;
  *
  * @param <A> the type of the parameter
  * @param <C> the unification parameter
- * @see Profunctor
  */
 public interface Contravariant<A, C extends Contravariant> {
 

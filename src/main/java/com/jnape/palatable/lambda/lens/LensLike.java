@@ -1,8 +1,8 @@
 package com.jnape.palatable.lambda.lens;
 
 import com.jnape.palatable.lambda.functor.Applicative;
+import com.jnape.palatable.lambda.functor.Contravariant;
 import com.jnape.palatable.lambda.functor.Functor;
-import com.jnape.palatable.lambda.functor.Profunctor;
 import com.jnape.palatable.lambda.monad.Monad;
 
 import java.util.function.Function;
@@ -20,7 +20,9 @@ import java.util.function.Function;
  * @see Lens
  * @see Iso
  */
-public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, LensLike<S, ?, A, B, LL>>, Profunctor<S, T, LensLike<S, ?, A, B, LL>, LensLike<?, T, A, B, LL>, LensLike<?, ?, A, B, LL>> {
+public interface LensLike<S, T, A, B, LL extends LensLike> extends
+        Monad<T, LensLike<S, ?, A, B, LL>>,
+        Contravariant<S, LensLike<?, T, A, B, LL>> {
 
     <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
             Function<? super A, ? extends FB> fn, S s);
@@ -109,24 +111,8 @@ public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, Lens
     }
 
     @Override
-    default <R> LensLike<R, T, A, B, LL> diMapL(Function<? super R, ? extends S> fn) {
-        return Profunctor.super.<R>diMapL(fn).downcast();
-    }
-
-    @Override
-    default <U> LensLike<S, U, A, B, LL> diMapR(Function<? super T, ? extends U> fn) {
-        return Profunctor.super.<U>diMapR(fn).downcast();
-    }
-
-    @Override
-    default <R, U> LensLike<R, U, A, B, LL> diMap(Function<? super R, ? extends S> lFn,
-                                                  Function<? super T, ? extends U> rFn) {
-        return this.<R>mapS(lFn).mapT(rFn);
-    }
-
-    @Override
     default <R> LensLike<R, T, A, B, LL> contraMap(Function<? super R, ? extends S> fn) {
-        return Profunctor.super.<R>contraMap(fn).downcast();
+        return mapS(fn);
     }
 
     /**

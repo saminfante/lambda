@@ -51,14 +51,6 @@ public interface BiPredicate<A, B> extends Fn2<A, B, Boolean>, java.util.functio
      * {@inheritDoc}
      */
     @Override
-    default <Z> BiPredicate<Z, B> diMapL(Function<? super Z, ? extends A> fn) {
-        return Fn2.super.diMapL(fn)::apply;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     default <Z> Fn2<Z, B, Boolean> contraMap(Function<? super Z, ? extends A> fn) {
         return Fn2.super.contraMap(fn)::apply;
     }

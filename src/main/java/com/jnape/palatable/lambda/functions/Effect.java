@@ -25,11 +25,6 @@ public interface Effect<A> extends Fn1<A, Unit>, Consumer<A> {
     }
 
     @Override
-    default <Z> Effect<Z> diMapL(Function<? super Z, ? extends A> fn) {
-        return Fn1.super.diMapL(fn)::apply;
-    }
-
-    @Override
     default <Z> Effect<Z> contraMap(Function<? super Z, ? extends A> fn) {
         return Fn1.super.contraMap(fn)::apply;
     }

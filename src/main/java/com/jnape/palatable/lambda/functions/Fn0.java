@@ -69,11 +69,6 @@ public interface Fn0<A> extends Fn1<Unit, A>, Supplier<A> {
     }
 
     @Override
-    default <B> Fn0<B> diMapR(Function<? super A, ? extends B> fn) {
-        return Fn1.super.<B>diMapR(fn).thunk(UNIT);
-    }
-
-    @Override
     default <Z> Fn1<Z, A> compose(Function<? super Z, ? extends Unit> before) {
         return Fn1.super.compose(before)::apply;
     }

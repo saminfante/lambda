@@ -155,11 +155,6 @@ public interface Fn7<A, B, C, D, E, F, G, H> extends Fn6<A, B, C, D, E, F, Fn1<G
     }
 
     @Override
-    default <Z> Fn7<Z, B, C, D, E, F, G, H> diMapL(Function<? super Z, ? extends A> fn) {
-        return fn7(Fn6.super.diMapL(fn));
-    }
-
-    @Override
     default <Z> Fn7<Z, B, C, D, E, F, G, H> contraMap(Function<? super Z, ? extends A> fn) {
         return fn7(Fn6.super.contraMap(fn));
     }
