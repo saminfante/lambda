@@ -20,7 +20,7 @@ import java.util.function.Function;
  * @see Lens
  * @see Iso
  */
-public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, LensLike<S, ?, A, B, LL>>, Profunctor<S, T, LensLike<?, ?, A, B, LL>> {
+public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, LensLike<S, ?, A, B, LL>>, Profunctor<S, T, LensLike<S, ?, A, B, LL>, LensLike<?, T, A, B, LL>, LensLike<?, ?, A, B, LL>> {
 
     <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
             Function<? super A, ? extends FB> fn, S s);
@@ -89,33 +89,33 @@ public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, Lens
 
     @Override
     default <U> LensLike<S, U, A, B, LL> fmap(Function<? super T, ? extends U> fn) {
-        return Monad.super.<U>fmap(fn).coerce();
+        return Monad.super.<U>fmap(fn).downcast();
     }
 
     @Override
     default <U> LensLike<S, U, A, B, LL> zip(
             Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, LL>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     default <U> LensLike<S, U, A, B, LL> discardL(Applicative<U, LensLike<S, ?, A, B, LL>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     default <U> LensLike<S, T, A, B, LL> discardR(Applicative<U, LensLike<S, ?, A, B, LL>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     default <R> LensLike<R, T, A, B, LL> diMapL(Function<? super R, ? extends S> fn) {
-        return (LensLike<R, T, A, B, LL>) Profunctor.super.<R>diMapL(fn);
+        return Profunctor.super.<R>diMapL(fn).downcast();
     }
 
     @Override
     default <U> LensLike<S, U, A, B, LL> diMapR(Function<? super T, ? extends U> fn) {
-        return (LensLike<S, U, A, B, LL>) Profunctor.super.<U>diMapR(fn);
+        return Profunctor.super.<U>diMapR(fn).downcast();
     }
 
     @Override
@@ -126,7 +126,7 @@ public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, Lens
 
     @Override
     default <R> LensLike<R, T, A, B, LL> contraMap(Function<? super R, ? extends S> fn) {
-        return (LensLike<R, T, A, B, LL>) Profunctor.super.<R>contraMap(fn);
+        return Profunctor.super.<R>contraMap(fn).downcast();
     }
 
     /**

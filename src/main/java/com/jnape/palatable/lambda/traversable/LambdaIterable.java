@@ -59,22 +59,22 @@ public final class LambdaIterable<A> implements Monad<A, LambdaIterable>, Traver
      */
     @Override
     public <B> LambdaIterable<B> zip(Applicative<Function<? super A, ? extends B>, LambdaIterable> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <B> LambdaIterable<B> discardL(Applicative<B, LambdaIterable> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <B> LambdaIterable<A> discardR(Applicative<B, LambdaIterable> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <B> LambdaIterable<B> flatMap(Function<? super A, ? extends Monad<B, LambdaIterable>> f) {
-        return wrap(flatten(map(a -> f.apply(a).<LambdaIterable<B>>coerce().unwrap(), as)));
+        return wrap(flatten(map(a -> f.apply(a).<LambdaIterable<B>>downcast().unwrap(), as)));
     }
 
     @Override

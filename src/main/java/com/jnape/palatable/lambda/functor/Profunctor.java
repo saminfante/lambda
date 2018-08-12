@@ -22,7 +22,9 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @see Lens
  */
 @FunctionalInterface
-public interface Profunctor<A, B, PF extends Profunctor> extends Contravariant<A, Profunctor<?, B, PF>> {
+public interface Profunctor<A, B, F extends PF, CF extends PF, PF extends Profunctor> extends
+        Contravariant<A, CF>,
+        Functor<B, F> {
 
     /**
      * Dually map contravariantly over the left parameter and covariantly over the right parameter. This is isomorphic
@@ -34,7 +36,8 @@ public interface Profunctor<A, B, PF extends Profunctor> extends Contravariant<A
      * @param rFn the right parameter mapping function
      * @return a profunctor over Z (the new left parameter type) and C (the new right parameter type)
      */
-    <Z, C> Profunctor<Z, C, PF> diMap(Function<? super Z, ? extends A> lFn, Function<? super B, ? extends C> rFn);
+    <Z, C> Profunctor<Z, C, ? extends PF, ? extends PF, PF> diMap(Function<? super Z, ? extends A> lFn,
+                                                                  Function<? super B, ? extends C> rFn);
 
     /**
      * Contravariantly map over the left parameter.
@@ -43,8 +46,8 @@ public interface Profunctor<A, B, PF extends Profunctor> extends Contravariant<A
      * @param fn  the mapping function
      * @return a profunctor over Z (the new left parameter type) and C (the same right parameter type)
      */
-    default <Z> Profunctor<Z, B, PF> diMapL(Function<? super Z, ? extends A> fn) {
-        return diMap(fn, id());
+    default <Z> Profunctor<Z, B, ? extends PF, CF, PF> diMapL(Function<? super Z, ? extends A> fn) {
+        return diMap(fn, id()).downcast();
     }
 
     /**
@@ -55,12 +58,18 @@ public interface Profunctor<A, B, PF extends Profunctor> extends Contravariant<A
      * @param fn  the mapping function
      * @return a profunctor over A (the same left parameter type) and C (the new right parameter type)
      */
-    default <C> Profunctor<A, C, PF> diMapR(Function<? super B, ? extends C> fn) {
-        return diMap(id(), fn);
+    @SuppressWarnings("unchecked")
+    default <C> Profunctor<A, C, F, ? extends PF, PF> diMapR(Function<? super B, ? extends C> fn) {
+        return (Profunctor<A, C, F, ? extends PF, PF>) diMap(id(), fn);
     }
 
     @Override
-    default <Z> Profunctor<Z, B, PF> contraMap(Function<? super Z, ? extends A> fn) {
+    default <Z> Profunctor<Z, B, ?, CF, PF> contraMap(Function<? super Z, ? extends A> fn) {
         return diMapL(fn);
+    }
+
+    @Override
+    default <C> Profunctor<A, C, F, ?, PF> fmap(Function<? super B, ? extends C> fn) {
+        return diMapR(fn);
     }
 }

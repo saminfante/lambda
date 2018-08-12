@@ -42,7 +42,7 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
      */
     @Override
     public final <C> These<A, C> flatMap(Function<? super B, ? extends Monad<C, These<A, ?>>> f) {
-        return match(These::a, b -> f.apply(b).coerce(), into((a, b) -> f.apply(b).<These<A, C>>coerce().biMapL(constantly(a))));
+        return match(These::a, b -> f.apply(b).downcast(), into((a, b) -> f.apply(b).<These<A, C>>downcast().biMapL(constantly(a))));
     }
 
     /**
@@ -58,8 +58,8 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
     public <C, App extends Applicative, TravB extends Traversable<C, These<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(a -> pure.apply((TravB) a(a)),
-                     b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::coerce).coerce(),
-                     into((a, b) -> fn.apply(b).fmap(c -> both(a, c)).<TravB>fmap(Applicative::coerce).coerce()));
+                     b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::downcast).downcast(),
+                     into((a, b) -> fn.apply(b).fmap(c -> both(a, c)).<TravB>fmap(Applicative::downcast).downcast()));
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
      */
     @Override
     public final <C> These<A, C> fmap(Function<? super B, ? extends C> fn) {
-        return Monad.super.<C>fmap(fn).coerce();
+        return Monad.super.<C>fmap(fn).downcast();
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
      */
     @Override
     public final <C> These<A, C> zip(Applicative<Function<? super B, ? extends C>, These<A, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
      */
     @Override
     public final <C> These<A, C> discardL(Applicative<C, These<A, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
      */
     @Override
     public final <C> These<A, B> discardR(Applicative<C, These<A, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     /**

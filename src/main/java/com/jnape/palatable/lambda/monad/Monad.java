@@ -53,7 +53,7 @@ public interface Monad<A, M extends Monad> extends Applicative<A, M> {
      */
     @Override
     default <B> Monad<B, M> zip(Applicative<Function<? super A, ? extends B>, M> appFn) {
-        return appFn.<Monad<Function<? super A, ? extends B>, M>>coerce().flatMap(ab -> fmap(ab::apply));
+        return appFn.<Monad<Function<? super A, ? extends B>, M>>downcast().flatMap(ab -> fmap(ab::apply));
     }
 
     /**
@@ -61,7 +61,7 @@ public interface Monad<A, M extends Monad> extends Applicative<A, M> {
      */
     @Override
     default <B> Monad<B, M> discardL(Applicative<B, M> appB) {
-        return Applicative.super.discardL(appB).coerce();
+        return Applicative.super.discardL(appB).downcast();
     }
 
     /**
@@ -69,6 +69,6 @@ public interface Monad<A, M extends Monad> extends Applicative<A, M> {
      */
     @Override
     default <B> Monad<A, M> discardR(Applicative<B, M> appB) {
-        return Applicative.super.discardR(appB).coerce();
+        return Applicative.super.discardR(appB).downcast();
     }
 }

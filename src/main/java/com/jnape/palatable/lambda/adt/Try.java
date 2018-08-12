@@ -141,12 +141,12 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
 
     @Override
     public <B> Try<T, B> fmap(Function<? super A, ? extends B> fn) {
-        return Monad.super.<B>fmap(fn).coerce();
+        return Monad.super.<B>fmap(fn).downcast();
     }
 
     @Override
     public <B> Try<T, B> flatMap(Function<? super A, ? extends Monad<B, Try<T, ?>>> f) {
-        return match(Try::failure, a -> f.apply(a).coerce());
+        return match(Try::failure, a -> f.apply(a).downcast());
     }
 
     @Override
@@ -156,17 +156,17 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
 
     @Override
     public <B> Try<T, B> zip(Applicative<Function<? super A, ? extends B>, Try<T, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <B> Try<T, B> discardL(Applicative<B, Try<T, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <B> Try<T, A> discardR(Applicative<B, Try<T, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
@@ -174,7 +174,7 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
     public <B, App extends Applicative, TravB extends Traversable<B, Try<T, ?>>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super A, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(t -> pure.apply((TravB) failure(t)),
-                     a -> fn.apply(a).fmap(Try::success).<TravB>fmap(Applicative::coerce).coerce());
+                     a -> fn.apply(a).fmap(Try::success).<TravB>fmap(Applicative::downcast).downcast());
     }
 
     @Override

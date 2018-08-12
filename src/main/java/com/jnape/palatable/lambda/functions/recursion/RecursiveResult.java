@@ -49,7 +49,7 @@ public abstract class RecursiveResult<A, B> implements CoProduct2<A, B, Recursiv
     @Override
     public <C> RecursiveResult<A, C> flatMap(
             Function<? super B, ? extends Monad<C, RecursiveResult<A, ?>>> f) {
-        return match(RecursiveResult::recurse, b -> f.apply(b).coerce());
+        return match(RecursiveResult::recurse, b -> f.apply(b).downcast());
     }
 
     @Override
@@ -59,30 +59,30 @@ public abstract class RecursiveResult<A, B> implements CoProduct2<A, B, Recursiv
 
     @Override
     public <C> RecursiveResult<A, C> fmap(Function<? super B, ? extends C> fn) {
-        return Monad.super.<C>fmap(fn).coerce();
+        return Monad.super.<C>fmap(fn).downcast();
     }
 
     @Override
     public <C> RecursiveResult<A, C> zip(
             Applicative<Function<? super B, ? extends C>, RecursiveResult<A, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <C> RecursiveResult<A, C> discardL(Applicative<C, RecursiveResult<A, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <C> RecursiveResult<A, B> discardR(Applicative<C, RecursiveResult<A, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <C, App extends Applicative, TravB extends Traversable<C, RecursiveResult<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return match(__ -> pure.apply(coerce()), b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::coerce).coerce());
+        return match(__ -> pure.apply(downcast()), b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::downcast).downcast());
     }
 
     public static <A, B> RecursiveResult<A, B> recurse(A a) {

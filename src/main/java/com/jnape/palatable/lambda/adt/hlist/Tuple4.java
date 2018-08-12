@@ -123,30 +123,30 @@ public class Tuple4<_1, _2, _3, _4> extends HCons<_1, Tuple3<_2, _3, _4>> implem
     @Override
     public <_4Prime> Tuple4<_1, _2, _3, _4Prime> zip(
             Applicative<Function<? super _4, ? extends _4Prime>, Tuple4<_1, _2, _3, ?>> appFn) {
-        return biMapR(appFn.<Tuple4<_1, _2, _3, Function<? super _4, ? extends _4Prime>>>coerce()._4());
+        return biMapR(appFn.<Tuple4<_1, _2, _3, Function<? super _4, ? extends _4Prime>>>downcast()._4());
     }
 
     @Override
     public <_4Prime> Tuple4<_1, _2, _3, _4Prime> discardL(Applicative<_4Prime, Tuple4<_1, _2, _3, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_4Prime> Tuple4<_1, _2, _3, _4> discardR(Applicative<_4Prime, Tuple4<_1, _2, _3, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_4Prime> Tuple4<_1, _2, _3, _4Prime> flatMap(
             Function<? super _4, ? extends Monad<_4Prime, Tuple4<_1, _2, _3, ?>>> f) {
-        return pure(f.apply(_4).<Tuple4<_1, _2, _3, _4Prime>>coerce()._4);
+        return pure(f.apply(_4).<Tuple4<_1, _2, _3, _4Prime>>downcast()._4);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <_4Prime, App extends Applicative, TravB extends Traversable<_4Prime, Tuple4<_1, _2, _3, ?>>, AppB extends Applicative<_4Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _4, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_4).fmap(_4Prime -> fmap(constantly(_4Prime))).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(_4).fmap(_4Prime -> fmap(constantly(_4Prime))).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

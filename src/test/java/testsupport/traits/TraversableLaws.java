@@ -41,8 +41,8 @@ public class TraversableLaws<Trav extends Traversable> implements Trait<Traversa
         Function<Traversable<Object, Trav>, Applicative<Traversable<Object, Trav>, Identity>> pureFn = x -> new Identity<>(x);
         Function<Traversable<Object, Trav>, Applicative<Traversable<Object, Trav>, Either<String, ?>>> pureFn2 = x -> right(x);
 
-        return t.apply(trav.traverse(f, pureFn).<Object>fmap(id()).coerce())
-                .equals(trav.traverse(t.compose(f), pureFn2).<Object>fmap(id()).coerce())
+        return t.apply(trav.traverse(f, pureFn).<Object>fmap(id()).downcast())
+                .equals(trav.traverse(t.compose(f), pureFn2).<Object>fmap(id()).downcast())
                 ? nothing()
                 : just("naturality (t.apply(trav.traverse(f, pureFn).<Object>fmap(id()).coerce())\n" +
                                "                .equals(trav.traverse(t.compose(f), pureFn2).<Object>fmap(id()).coerce()))");

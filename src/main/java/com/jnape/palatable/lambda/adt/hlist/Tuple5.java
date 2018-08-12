@@ -114,7 +114,7 @@ public class Tuple5<_1, _2, _3, _4, _5> extends HCons<_1, Tuple4<_2, _3, _4, _5>
 
     @Override
     public <_5Prime> Tuple5<_1, _2, _3, _4, _5Prime> fmap(Function<? super _5, ? extends _5Prime> fn) {
-        return Monad.super.<_5Prime>fmap(fn).coerce();
+        return Monad.super.<_5Prime>fmap(fn).downcast();
     }
 
     @Override
@@ -143,30 +143,30 @@ public class Tuple5<_1, _2, _3, _4, _5> extends HCons<_1, Tuple4<_2, _3, _4, _5>
     @Override
     public <_5Prime> Tuple5<_1, _2, _3, _4, _5Prime> zip(
             Applicative<Function<? super _5, ? extends _5Prime>, Tuple5<_1, _2, _3, _4, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <_5Prime> Tuple5<_1, _2, _3, _4, _5Prime> discardL(Applicative<_5Prime, Tuple5<_1, _2, _3, _4, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_5Prime> Tuple5<_1, _2, _3, _4, _5> discardR(Applicative<_5Prime, Tuple5<_1, _2, _3, _4, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_5Prime> Tuple5<_1, _2, _3, _4, _5Prime> flatMap(
             Function<? super _5, ? extends Monad<_5Prime, Tuple5<_1, _2, _3, _4, ?>>> f) {
-        return pure(f.apply(_5).<Tuple5<_1, _2, _3, _4, _5Prime>>coerce()._5());
+        return pure(f.apply(_5).<Tuple5<_1, _2, _3, _4, _5Prime>>downcast()._5());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <_5Prime, App extends Applicative, TravB extends Traversable<_5Prime, Tuple5<_1, _2, _3, _4, ?>>, AppB extends Applicative<_5Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _5, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_5).fmap(_3Prime -> fmap(constantly(_3Prime))).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(_5).fmap(_3Prime -> fmap(constantly(_3Prime))).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

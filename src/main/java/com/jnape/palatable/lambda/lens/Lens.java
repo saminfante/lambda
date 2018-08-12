@@ -141,7 +141,7 @@ public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
 
     @Override
     default <U> Lens<S, U, A, B> fmap(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>fmap(fn).coerce();
+        return LensLike.super.<U>fmap(fn).downcast();
     }
 
     @Override
@@ -151,43 +151,43 @@ public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
 
     @Override
     default <U> Lens<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Lens>> appFn) {
-        return LensLike.super.zip(appFn).coerce();
+        return LensLike.super.zip(appFn).downcast();
     }
 
     @Override
     default <U> Lens<S, U, A, B> discardL(Applicative<U, LensLike<S, ?, A, B, Lens>> appB) {
-        return LensLike.super.discardL(appB).coerce();
+        return LensLike.super.discardL(appB).downcast();
     }
 
     @Override
     default <U> Lens<S, T, A, B> discardR(Applicative<U, LensLike<S, ?, A, B, Lens>> appB) {
-        return LensLike.super.discardR(appB).coerce();
+        return LensLike.super.discardR(appB).downcast();
     }
 
     @Override
     default <U> Lens<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Lens>>> f) {
-        return lens(view(this), (s, b) -> set(f.apply(set(this, b, s)).<Lens<S, U, A, B>>coerce(), b, s));
+        return lens(view(this), (s, b) -> set(f.apply(set(this, b, s)).<Lens<S, U, A, B>>downcast(), b, s));
     }
 
     @Override
     default <R> Lens<R, T, A, B> diMapL(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>diMapL(fn).coerce();
+        return LensLike.super.<R>diMapL(fn).downcast();
     }
 
     @Override
     default <U> Lens<S, U, A, B> diMapR(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>diMapR(fn).coerce();
+        return LensLike.super.<U>diMapR(fn).downcast();
     }
 
     @Override
     default <R, U> Lens<R, U, A, B> diMap(Function<? super R, ? extends S> lFn,
                                           Function<? super T, ? extends U> rFn) {
-        return LensLike.super.<R, U>diMap(lFn, rFn).coerce();
+        return LensLike.super.<R, U>diMap(lFn, rFn).downcast();
     }
 
     @Override
     default <R> Lens<R, T, A, B> contraMap(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>contraMap(fn).coerce();
+        return LensLike.super.<R>contraMap(fn).downcast();
     }
 
     @Override

@@ -62,7 +62,7 @@ public abstract class Choice8<A, B, C, D, E, F, G, H> implements
 
     @Override
     public <I> Choice8<A, B, C, D, E, F, G, I> fmap(Function<? super H, ? extends I> fn) {
-        return Monad.super.<I>fmap(fn).coerce();
+        return Monad.super.<I>fmap(fn).downcast();
     }
 
     @Override
@@ -91,38 +91,38 @@ public abstract class Choice8<A, B, C, D, E, F, G, H> implements
     @Override
     public <I> Choice8<A, B, C, D, E, F, G, I> zip(
             Applicative<Function<? super H, ? extends I>, Choice8<A, B, C, D, E, F, G, ?>> appFn) {
-        return appFn.<Choice8<A, B, C, D, E, F, G, Function<? super H, ? extends I>>>coerce()
+        return appFn.<Choice8<A, B, C, D, E, F, G, Function<? super H, ? extends I>>>downcast()
                 .match(Choice8::a, Choice8::b, Choice8::c, Choice8::d, Choice8::e, Choice8::f, Choice8::g, this::biMapR);
     }
 
     @Override
     public <I> Choice8<A, B, C, D, E, F, G, I> discardL(Applicative<I, Choice8<A, B, C, D, E, F, G, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <I> Choice8<A, B, C, D, E, F, G, H> discardR(Applicative<I, Choice8<A, B, C, D, E, F, G, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <I> Choice8<A, B, C, D, E, F, G, I> flatMap(
             Function<? super H, ? extends Monad<I, Choice8<A, B, C, D, E, F, G, ?>>> fn) {
-        return match(Choice8::a, Choice8::b, Choice8::c, Choice8::d, Choice8::e, Choice8::f, Choice8::g, h -> fn.apply(h).coerce());
+        return match(Choice8::a, Choice8::b, Choice8::c, Choice8::d, Choice8::e, Choice8::f, Choice8::g, h -> fn.apply(h).downcast());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <I, App extends Applicative, TravB extends Traversable<I, Choice8<A, B, C, D, E, F, G, ?>>, AppB extends Applicative<I, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super H, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return match(a -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>a(a)).coerce(),
-                     b -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>b(b)).coerce(),
+        return match(a -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>a(a)).downcast(),
+                     b -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>b(b)).downcast(),
                      c -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>c(c)),
                      d -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>d(d)),
                      e -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>e(e)),
                      f -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>f(f)),
                      g -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>g(g)),
-                     h -> fn.apply(h).fmap(Choice8::h).<TravB>fmap(Applicative::coerce).coerce());
+                     h -> fn.apply(h).fmap(Choice8::h).<TravB>fmap(Applicative::downcast).downcast());
     }
 
     /**

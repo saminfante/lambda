@@ -22,7 +22,7 @@ public final class Compose<F extends Applicative, G extends Applicative, A> impl
     }
 
     public <GA extends Applicative<A, G>, FGA extends Applicative<GA, F>> FGA getCompose() {
-        return fga.<GA>fmap(Applicative::coerce).coerce();
+        return fga.<GA>fmap(Applicative::downcast).downcast();
     }
 
     @Override
@@ -37,17 +37,17 @@ public final class Compose<F extends Applicative, G extends Applicative, A> impl
 
     @Override
     public <B> Compose<F, G, B> zip(Applicative<Function<? super A, ? extends B>, Compose<F, G, ?>> appFn) {
-        return new Compose<>(fga.zip(appFn.<Compose<F, G, Function<? super A, ? extends B>>>coerce().getCompose().fmap(gFn -> g -> g.zip(gFn))));
+        return new Compose<>(fga.zip(appFn.<Compose<F, G, Function<? super A, ? extends B>>>downcast().getCompose().fmap(gFn -> g -> g.zip(gFn))));
     }
 
     @Override
     public <B> Compose<F, G, B> discardL(Applicative<B, Compose<F, G, ?>> appB) {
-        return Applicative.super.discardL(appB).coerce();
+        return Applicative.super.discardL(appB).downcast();
     }
 
     @Override
     public <B> Compose<F, G, A> discardR(Applicative<B, Compose<F, G, ?>> appB) {
-        return Applicative.super.discardR(appB).coerce();
+        return Applicative.super.discardR(appB).downcast();
     }
 
     @Override

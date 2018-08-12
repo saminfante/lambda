@@ -111,22 +111,22 @@ public abstract class Maybe<A> implements Monad<A, Maybe>, Traversable<A, Maybe>
      */
     @Override
     public final <B> Maybe<B> fmap(Function<? super A, ? extends B> fn) {
-        return Monad.super.<B>fmap(fn).coerce();
+        return Monad.super.<B>fmap(fn).downcast();
     }
 
     @Override
     public final <B> Maybe<B> zip(Applicative<Function<? super A, ? extends B>, Maybe> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public final <B> Maybe<B> discardL(Applicative<B, Maybe> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public final <B> Maybe<A> discardR(Applicative<B, Maybe> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
@@ -212,7 +212,7 @@ public abstract class Maybe<A> implements Monad<A, Maybe>, Traversable<A, Maybe>
 
         @Override
         public <B> Maybe<B> flatMap(Function<? super A, ? extends Monad<B, Maybe>> f) {
-            return f.apply(a).coerce();
+            return f.apply(a).downcast();
         }
 
         @Override
@@ -220,7 +220,7 @@ public abstract class Maybe<A> implements Monad<A, Maybe>, Traversable<A, Maybe>
         public <B, App extends Applicative, TravB extends Traversable<B, Maybe>,
                 AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
                 Function<? super A, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-            return fn.apply(a).fmap(Just::new).<TravB>fmap(Applicative::coerce).coerce();
+            return fn.apply(a).fmap(Just::new).<TravB>fmap(Applicative::downcast).downcast();
         }
 
         @Override

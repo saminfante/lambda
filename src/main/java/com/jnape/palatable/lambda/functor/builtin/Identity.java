@@ -34,7 +34,7 @@ public final class Identity<A> implements Monad<A, Identity>, Traversable<A, Ide
      */
     @Override
     public <B> Identity<B> flatMap(Function<? super A, ? extends Monad<B, Identity>> f) {
-        return f.apply(runIdentity()).coerce();
+        return f.apply(runIdentity()).downcast();
     }
 
     /**
@@ -42,7 +42,7 @@ public final class Identity<A> implements Monad<A, Identity>, Traversable<A, Ide
      */
     @Override
     public <B> Identity<B> fmap(Function<? super A, ? extends B> fn) {
-        return Monad.super.<B>fmap(fn).coerce();
+        return Monad.super.<B>fmap(fn).downcast();
     }
 
     @Override
@@ -52,17 +52,17 @@ public final class Identity<A> implements Monad<A, Identity>, Traversable<A, Ide
 
     @Override
     public <B> Identity<B> zip(Applicative<Function<? super A, ? extends B>, Identity> appFn) {
-        return new Identity<>(appFn.<Identity<Function<? super A, ? extends B>>>coerce().runIdentity().apply(a));
+        return new Identity<>(appFn.<Identity<Function<? super A, ? extends B>>>downcast().runIdentity().apply(a));
     }
 
     @Override
     public <B> Identity<B> discardL(Applicative<B, Identity> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <B> Identity<A> discardR(Applicative<B, Identity> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override

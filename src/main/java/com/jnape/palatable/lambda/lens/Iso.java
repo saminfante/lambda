@@ -53,13 +53,13 @@ import static com.jnape.palatable.lambda.lens.functions.View.view;
 public interface Iso<S, T, A, B> extends LensLike<S, T, A, B, Iso> {
 
     <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>,
-            PAFB extends Profunctor<A, FB, P>,
-            PSFT extends Profunctor<S, FT, P>> PSFT apply(PAFB pafb);
+            PAFB extends Profunctor<A, FB, ?, ?, P>,
+            PSFT extends Profunctor<S, FT, ?, ?, P>> PSFT apply(PAFB pafb);
 
     @Override
     default <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
             Function<? super A, ? extends FB> fn, S s) {
-        return this.<Fn1, F, FB, FT, Fn1<A, FB>, Fn1<S, FT>>apply(fn1(fn)).apply(s);
+        return this.<Fn1<?, ?>, F, FB, FT, Fn1<A, FB>, Fn1<S, FT>>apply(fn1(fn)).apply(s);
     }
 
     /**
@@ -101,7 +101,7 @@ public interface Iso<S, T, A, B> extends LensLike<S, T, A, B, Iso> {
 
     @Override
     default <U> Iso<S, U, A, B> fmap(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>fmap(fn).coerce();
+        return LensLike.super.<U>fmap(fn).downcast();
     }
 
     @Override
@@ -111,22 +111,22 @@ public interface Iso<S, T, A, B> extends LensLike<S, T, A, B, Iso> {
 
     @Override
     default <U> Iso<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Iso>> appFn) {
-        return LensLike.super.zip(appFn).coerce();
+        return LensLike.super.zip(appFn).downcast();
     }
 
     @Override
     default <U> Iso<S, U, A, B> discardL(Applicative<U, LensLike<S, ?, A, B, Iso>> appB) {
-        return LensLike.super.discardL(appB).coerce();
+        return LensLike.super.discardL(appB).downcast();
     }
 
     @Override
     default <U> Iso<S, T, A, B> discardR(Applicative<U, LensLike<S, ?, A, B, Iso>> appB) {
-        return LensLike.super.discardR(appB).coerce();
+        return LensLike.super.discardR(appB).downcast();
     }
 
     @Override
     default <U> Iso<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Iso>>> fn) {
-        return unIso().fmap(bt -> Fn2.<B, B, U>fn2(fn1(bt.andThen(fn.<Iso<S, U, A, B>>andThen(Applicative::coerce))
+        return unIso().fmap(bt -> Fn2.<B, B, U>fn2(fn1(bt.andThen(fn.<Iso<S, U, A, B>>andThen(Applicative::downcast))
                                                                .andThen(Iso::unIso)
                                                                .andThen(Tuple2::_2)
                                                                .andThen(Fn1::fn1))))
@@ -137,23 +137,23 @@ public interface Iso<S, T, A, B> extends LensLike<S, T, A, B, Iso> {
 
     @Override
     default <R> Iso<R, T, A, B> diMapL(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>diMapL(fn).coerce();
+        return LensLike.super.<R>diMapL(fn).downcast();
     }
 
     @Override
     default <U> Iso<S, U, A, B> diMapR(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>diMapR(fn).coerce();
+        return LensLike.super.<U>diMapR(fn).downcast();
     }
 
     @Override
     default <R, U> Iso<R, U, A, B> diMap(Function<? super R, ? extends S> lFn,
                                          Function<? super T, ? extends U> rFn) {
-        return LensLike.super.<R, U>diMap(lFn, rFn).coerce();
+        return LensLike.super.<R, U>diMap(lFn, rFn).downcast();
     }
 
     @Override
     default <R> Iso<R, T, A, B> contraMap(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>contraMap(fn).coerce();
+        return LensLike.super.<R>contraMap(fn).downcast();
     }
 
     @Override
@@ -226,7 +226,7 @@ public interface Iso<S, T, A, B> extends LensLike<S, T, A, B, Iso> {
         return new Iso<S, T, A, B>() {
             @Override
             @SuppressWarnings("unchecked")
-            public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Profunctor<A, FB, P>, PSFT extends Profunctor<S, FT, P>> PSFT apply(
+            public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Profunctor<A, FB, ?, ?, P>, PSFT extends Profunctor<S, FT, ?, ?, P>> PSFT apply(
                     PAFB pafb) {
                 return (PSFT) pafb.<S, FT>diMap(f, fb -> (FT) fb.<T>fmap(g));
             }

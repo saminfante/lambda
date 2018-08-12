@@ -77,7 +77,7 @@ public class Tuple2<_1, _2> extends HCons<_1, SingletonHList<_2>> implements
 
     @Override
     public <_2Prime> Tuple2<_1, _2Prime> fmap(Function<? super _2, ? extends _2Prime> fn) {
-        return Monad.super.<_2Prime>fmap(fn).coerce();
+        return Monad.super.<_2Prime>fmap(fn).downcast();
     }
 
     @Override
@@ -106,29 +106,29 @@ public class Tuple2<_1, _2> extends HCons<_1, SingletonHList<_2>> implements
     @Override
     public <_2Prime> Tuple2<_1, _2Prime> zip(
             Applicative<Function<? super _2, ? extends _2Prime>, Tuple2<_1, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <_2Prime> Tuple2<_1, _2Prime> discardL(Applicative<_2Prime, Tuple2<_1, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_2Prime> Tuple2<_1, _2> discardR(Applicative<_2Prime, Tuple2<_1, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_2Prime> Tuple2<_1, _2Prime> flatMap(Function<? super _2, ? extends Monad<_2Prime, Tuple2<_1, ?>>> f) {
-        return pure(f.apply(_2).<Tuple2<_1, _2Prime>>coerce()._2());
+        return pure(f.apply(_2).<Tuple2<_1, _2Prime>>downcast()._2());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <_2Prime, App extends Applicative, TravB extends Traversable<_2Prime, Tuple2<_1, ?>>, AppB extends Applicative<_2Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _2, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_2).fmap(_2Prime -> fmap(constantly(_2Prime))).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(_2).fmap(_2Prime -> fmap(constantly(_2Prime))).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

@@ -25,7 +25,7 @@ public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     }
 
     @Override
-    public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Profunctor<A, FB, P>, PSFT extends Profunctor<S, FT, P>> PSFT apply(
+    public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Profunctor<A, FB, ?, ?, P>, PSFT extends Profunctor<S, FT, ?, ?, P>> PSFT apply(
             PAFB pafb) {
         return iso.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
     }

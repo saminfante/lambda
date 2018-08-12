@@ -108,30 +108,30 @@ public class Tuple3<_1, _2, _3> extends HCons<_1, Tuple2<_2, _3>> implements
     @Override
     public <_3Prime> Tuple3<_1, _2, _3Prime> zip(
             Applicative<Function<? super _3, ? extends _3Prime>, Tuple3<_1, _2, ?>> appFn) {
-        return biMapR(appFn.<Tuple3<_1, _2, Function<? super _3, ? extends _3Prime>>>coerce()._3());
+        return biMapR(appFn.<Tuple3<_1, _2, Function<? super _3, ? extends _3Prime>>>downcast()._3());
     }
 
     @Override
     public <_3Prime> Tuple3<_1, _2, _3Prime> discardL(Applicative<_3Prime, Tuple3<_1, _2, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_3Prime> Tuple3<_1, _2, _3> discardR(Applicative<_3Prime, Tuple3<_1, _2, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_3Prime> Tuple3<_1, _2, _3Prime> flatMap(
             Function<? super _3, ? extends Monad<_3Prime, Tuple3<_1, _2, ?>>> f) {
-        return pure(f.apply(_3).<Tuple3<_1, _2, _3Prime>>coerce()._3);
+        return pure(f.apply(_3).<Tuple3<_1, _2, _3Prime>>downcast()._3);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <_3Prime, App extends Applicative, TravB extends Traversable<_3Prime, Tuple3<_1, _2, ?>>, AppB extends Applicative<_3Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _3, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_3).fmap(_3Prime -> fmap(constantly(_3Prime))).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(_3).fmap(_3Prime -> fmap(constantly(_3Prime))).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

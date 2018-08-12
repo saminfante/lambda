@@ -59,7 +59,7 @@ public abstract class Choice4<A, B, C, D> implements
 
     @Override
     public final <E> Choice4<A, B, C, E> fmap(Function<? super D, ? extends E> fn) {
-        return Monad.super.<E>fmap(fn).coerce();
+        return Monad.super.<E>fmap(fn).downcast();
     }
 
     @Override
@@ -87,33 +87,33 @@ public abstract class Choice4<A, B, C, D> implements
 
     @Override
     public <E> Choice4<A, B, C, E> zip(Applicative<Function<? super D, ? extends E>, Choice4<A, B, C, ?>> appFn) {
-        return appFn.<Choice4<A, B, C, Function<? super D, ? extends E>>>coerce()
+        return appFn.<Choice4<A, B, C, Function<? super D, ? extends E>>>downcast()
                 .match(Choice4::a, Choice4::b, Choice4::c, this::biMapR);
     }
 
     @Override
     public <E> Choice4<A, B, C, E> discardL(Applicative<E, Choice4<A, B, C, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <E> Choice4<A, B, C, D> discardR(Applicative<E, Choice4<A, B, C, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <E> Choice4<A, B, C, E> flatMap(Function<? super D, ? extends Monad<E, Choice4<A, B, C, ?>>> f) {
-        return match(Choice4::a, Choice4::b, Choice4::c, d -> f.apply(d).coerce());
+        return match(Choice4::a, Choice4::b, Choice4::c, d -> f.apply(d).downcast());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <E, App extends Applicative, TravB extends Traversable<E, Choice4<A, B, C, ?>>, AppB extends Applicative<E, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super D, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return match(a -> pure.apply((TravB) Choice4.<A, B, C, E>a(a)).coerce(),
-                     b -> pure.apply((TravB) Choice4.<A, B, C, E>b(b)).coerce(),
+        return match(a -> pure.apply((TravB) Choice4.<A, B, C, E>a(a)).downcast(),
+                     b -> pure.apply((TravB) Choice4.<A, B, C, E>b(b)).downcast(),
                      c -> pure.apply((TravB) Choice4.<A, B, C, E>c(c)),
-                     d -> fn.apply(d).fmap(Choice4::d).<TravB>fmap(Applicative::coerce).coerce());
+                     d -> fn.apply(d).fmap(Choice4::d).<TravB>fmap(Applicative::downcast).downcast());
     }
 
     /**

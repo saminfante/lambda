@@ -124,7 +124,7 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
      */
     @Override
     public <R2> Either<L, R2> flatMap(Function<? super R, ? extends Monad<R2, Either<L, ?>>> rightFn) {
-        return match(Either::left, rightFn.andThen(Applicative::coerce));
+        return flatMap(Either::left, rightFn.andThen(Applicative::downcast));
     }
 
     /**
@@ -212,7 +212,7 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
 
     @Override
     public final <R2> Either<L, R2> fmap(Function<? super R, ? extends R2> fn) {
-        return Monad.super.<R2>fmap(fn).coerce();
+        return Monad.super.<R2>fmap(fn).downcast();
     }
 
     @Override
@@ -240,17 +240,17 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
 
     @Override
     public final <R2> Either<L, R2> zip(Applicative<Function<? super R, ? extends R2>, Either<L, ?>> appFn) {
-        return appFn.<Either<L, Function<? super R, ? extends R2>>>coerce().flatMap(this::biMapR);
+        return appFn.<Either<L, Function<? super R, ? extends R2>>>downcast().flatMap(this::biMapR);
     }
 
     @Override
     public final <R2> Either<L, R2> discardL(Applicative<R2, Either<L, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public final <R2> Either<L, R> discardR(Applicative<R2, Either<L, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override

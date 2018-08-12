@@ -31,7 +31,7 @@ public class SingletonHList<_1> extends HCons<_1, HNil> implements Monad<_1, Sin
 
     @Override
     public <_1Prime> SingletonHList<_1Prime> fmap(Function<? super _1, ? extends _1Prime> fn) {
-        return Monad.super.<_1Prime>fmap(fn).coerce();
+        return Monad.super.<_1Prime>fmap(fn).downcast();
     }
 
     @Override
@@ -42,29 +42,29 @@ public class SingletonHList<_1> extends HCons<_1, HNil> implements Monad<_1, Sin
     @Override
     public <_1Prime> SingletonHList<_1Prime> zip(
             Applicative<Function<? super _1, ? extends _1Prime>, SingletonHList> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <_1Prime> SingletonHList<_1Prime> discardL(Applicative<_1Prime, SingletonHList> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_1Prime> SingletonHList<_1> discardR(Applicative<_1Prime, SingletonHList> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_1Prime> SingletonHList<_1Prime> flatMap(Function<? super _1, ? extends Monad<_1Prime, SingletonHList>> f) {
-        return f.apply(head()).coerce();
+        return f.apply(head()).downcast();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <B, App extends Applicative, TravB extends Traversable<B, SingletonHList>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _1, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(head()).fmap(SingletonHList::new).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(head()).fmap(SingletonHList::new).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

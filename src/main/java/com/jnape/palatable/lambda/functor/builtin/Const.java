@@ -44,7 +44,7 @@ public final class Const<A, B> implements Monad<B, Const<A, ?>>, Bifunctor<A, B,
      */
     @Override
     public <C> Const<A, C> fmap(Function<? super B, ? extends C> fn) {
-        return Monad.super.<C>fmap(fn).coerce();
+        return Monad.super.<C>fmap(fn).downcast();
     }
 
     @Override
@@ -55,17 +55,17 @@ public final class Const<A, B> implements Monad<B, Const<A, ?>>, Bifunctor<A, B,
 
     @Override
     public <C> Const<A, C> zip(Applicative<Function<? super B, ? extends C>, Const<A, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <C> Const<A, C> discardL(Applicative<C, Const<A, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <C> Const<A, B> discardR(Applicative<C, Const<A, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class Const<A, B> implements Monad<B, Const<A, ?>>, Bifunctor<A, B,
     @Override
     public <C, App extends Applicative, TravB extends Traversable<C, Const<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return pure.apply(coerce());
+        return pure.apply(downcast());
     }
 
     /**

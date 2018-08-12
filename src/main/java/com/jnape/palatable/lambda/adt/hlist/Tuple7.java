@@ -152,7 +152,7 @@ public class Tuple7<_1, _2, _3, _4, _5, _6, _7> extends HCons<_1, Tuple6<_2, _3,
 
     @Override
     public <_7Prime> Tuple7<_1, _2, _3, _4, _5, _6, _7Prime> fmap(Function<? super _7, ? extends _7Prime> fn) {
-        return Monad.super.<_7Prime>fmap(fn).coerce();
+        return Monad.super.<_7Prime>fmap(fn).downcast();
     }
 
     @Override
@@ -182,32 +182,32 @@ public class Tuple7<_1, _2, _3, _4, _5, _6, _7> extends HCons<_1, Tuple6<_2, _3,
     @Override
     public <_7Prime> Tuple7<_1, _2, _3, _4, _5, _6, _7Prime> zip(
             Applicative<Function<? super _7, ? extends _7Prime>, Tuple7<_1, _2, _3, _4, _5, _6, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <_7Prime> Tuple7<_1, _2, _3, _4, _5, _6, _7Prime> discardL(
             Applicative<_7Prime, Tuple7<_1, _2, _3, _4, _5, _6, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_7Prime> Tuple7<_1, _2, _3, _4, _5, _6, _7> discardR(
             Applicative<_7Prime, Tuple7<_1, _2, _3, _4, _5, _6, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_7Prime> Tuple7<_1, _2, _3, _4, _5, _6, _7Prime> flatMap(
             Function<? super _7, ? extends Monad<_7Prime, Tuple7<_1, _2, _3, _4, _5, _6, ?>>> f) {
-        return pure(f.apply(_7).<Tuple7<_1, _2, _3, _4, _5, _6, _7Prime>>coerce()._7());
+        return pure(f.apply(_7).<Tuple7<_1, _2, _3, _4, _5, _6, _7Prime>>downcast()._7());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <_7Prime, App extends Applicative, TravB extends Traversable<_7Prime, Tuple7<_1, _2, _3, _4, _5, _6, ?>>, AppB extends Applicative<_7Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _7, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_7).fmap(_7Prime -> fmap(constantly(_7Prime))).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(_7).fmap(_7Prime -> fmap(constantly(_7Prime))).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

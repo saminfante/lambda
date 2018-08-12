@@ -28,7 +28,7 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
         Iso.Simple<A, B> discarded = Iso.Simple.super.discardR(appB);
         return new TypeSafeKey<A, B>() {
             @Override
-            public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<A, F>, PAFB extends Profunctor<B, FB, P>, PSFT extends Profunctor<A, FT, P>> PSFT apply(
+            public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<A, F>, PAFB extends Profunctor<B, FB, ?, ?, P>, PSFT extends Profunctor<A, FT, ?, ?, P>> PSFT apply(
                     PAFB pafb) {
                 return discarded.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
             }
@@ -64,7 +64,7 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
         Iso.Simple<A, C> composed = Iso.Simple.super.andThen(f);
         return new TypeSafeKey<A, C>() {
             @Override
-            public <P extends Profunctor, F extends Functor, FB extends Functor<C, F>, FT extends Functor<A, F>, PAFB extends Profunctor<C, FB, P>, PSFT extends Profunctor<A, FT, P>> PSFT apply(
+            public <P extends Profunctor, F extends Functor, FB extends Functor<C, F>, FT extends Functor<A, F>, PAFB extends Profunctor<C, FB, ?, ?, P>, PSFT extends Profunctor<A, FT, ?, ?, P>> PSFT apply(
                     PAFB pafb) {
                 return composed.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
             }
@@ -105,7 +105,7 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
 
         @Override
         @SuppressWarnings("unchecked")
-        default <P extends Profunctor, F extends Functor, FB extends Functor<A, F>, FT extends Functor<A, F>, PAFB extends Profunctor<A, FB, P>, PSFT extends Profunctor<A, FT, P>> PSFT apply(
+        default <P extends Profunctor, F extends Functor, FB extends Functor<A, F>, FT extends Functor<A, F>, PAFB extends Profunctor<A, FB, ?, ?, P>, PSFT extends Profunctor<A, FT, ?, ?, P>> PSFT apply(
                 PAFB pafb) {
             return (PSFT) pafb;
         }

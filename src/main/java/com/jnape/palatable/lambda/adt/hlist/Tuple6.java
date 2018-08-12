@@ -133,7 +133,7 @@ public class Tuple6<_1, _2, _3, _4, _5, _6> extends HCons<_1, Tuple5<_2, _3, _4,
 
     @Override
     public <_6Prime> Tuple6<_1, _2, _3, _4, _5, _6Prime> fmap(Function<? super _6, ? extends _6Prime> fn) {
-        return Monad.super.<_6Prime>fmap(fn).coerce();
+        return Monad.super.<_6Prime>fmap(fn).downcast();
     }
 
     @Override
@@ -163,31 +163,31 @@ public class Tuple6<_1, _2, _3, _4, _5, _6> extends HCons<_1, Tuple5<_2, _3, _4,
     @Override
     public <_6Prime> Tuple6<_1, _2, _3, _4, _5, _6Prime> zip(
             Applicative<Function<? super _6, ? extends _6Prime>, Tuple6<_1, _2, _3, _4, _5, ?>> appFn) {
-        return Monad.super.zip(appFn).coerce();
+        return Monad.super.zip(appFn).downcast();
     }
 
     @Override
     public <_6Prime> Tuple6<_1, _2, _3, _4, _5, _6Prime> discardL(
             Applicative<_6Prime, Tuple6<_1, _2, _3, _4, _5, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <_6Prime> Tuple6<_1, _2, _3, _4, _5, _6> discardR(Applicative<_6Prime, Tuple6<_1, _2, _3, _4, _5, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public <_6Prime> Tuple6<_1, _2, _3, _4, _5, _6Prime> flatMap(
             Function<? super _6, ? extends Monad<_6Prime, Tuple6<_1, _2, _3, _4, _5, ?>>> f) {
-        return pure(f.apply(_6).<Tuple6<_1, _2, _3, _4, _5, _6Prime>>coerce()._6());
+        return pure(f.apply(_6).<Tuple6<_1, _2, _3, _4, _5, _6Prime>>downcast()._6());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <_6Prime, App extends Applicative, TravB extends Traversable<_6Prime, Tuple6<_1, _2, _3, _4, _5, ?>>, AppB extends Applicative<_6Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _6, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_6).fmap(_6Prime -> fmap(constantly(_6Prime))).<TravB>fmap(Applicative::coerce).coerce();
+        return fn.apply(_6).fmap(_6Prime -> fmap(constantly(_6Prime))).<TravB>fmap(Applicative::downcast).downcast();
     }
 
     /**

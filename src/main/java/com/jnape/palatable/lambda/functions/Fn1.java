@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import static com.jnape.palatable.lambda.functions.Fn2.fn2;
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
+import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
 
 /**
  * A function taking a single argument. This is the core function type that all other function types extend and
@@ -18,7 +19,8 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.consta
  * @param <B> The result type
  */
 @FunctionalInterface
-public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, Function<A, B> {
+public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>,
+        Profunctor<A, B, Fn1<A, ?>, Fn1<?, B>, Fn1<?, ?>>, Function<A, B> {
 
     /**
      * Invoke this function with the given argument.
@@ -51,7 +53,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
 
     @Override
     default <C> Fn1<A, C> flatMap(Function<? super B, ? extends Monad<C, Fn1<A, ?>>> f) {
-        return a -> f.apply(apply(a)).<Fn1<A, C>>coerce().apply(a);
+        return a -> f.apply(apply(a)).<Fn1<A, C>>downcast().apply(a);
     }
 
     /**
@@ -63,7 +65,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
      */
     @Override
     default <C> Fn1<A, C> fmap(Function<? super B, ? extends C> f) {
-        return Monad.super.<C>fmap(f).coerce();
+        return Monad.super.<C>fmap(f).downcast();
     }
 
     /**
@@ -79,7 +81,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
      */
     @Override
     default <C> Fn1<A, C> zip(Applicative<Function<? super B, ? extends C>, Fn1<A, ?>> appFn) {
-        return a -> appFn.<Fn1<A, Function<? super B, ? extends C>>>coerce().apply(a).apply(apply(a));
+        return a -> appFn.<Fn1<A, Function<? super B, ? extends C>>>downcast().apply(a).apply(apply(a));
     }
 
     /**
@@ -95,7 +97,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
      */
     @Override
     default <C> Fn1<A, C> discardL(Applicative<C, Fn1<A, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     /**
@@ -103,7 +105,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
      */
     @Override
     default <C> Fn1<A, B> discardR(Applicative<C, Fn1<A, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     /**
@@ -116,7 +118,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
      */
     @Override
     default <Z> Fn1<Z, B> diMapL(Function<? super Z, ? extends A> fn) {
-        return (Fn1<Z, B>) Profunctor.super.<Z>diMapL(fn);
+        return Profunctor.super.<Z>diMapL(fn).downcast();
     }
 
     /**
@@ -129,7 +131,7 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
      */
     @Override
     default <C> Fn1<A, C> diMapR(Function<? super B, ? extends C> fn) {
-        return (Fn1<A, C>) Profunctor.super.<C>diMapR(fn);
+        return diMap(id(), fn);
     }
 
     /**
@@ -146,9 +148,12 @@ public interface Fn1<A, B> extends Monad<B, Fn1<A, ?>>, Profunctor<A, B, Fn1>, F
         return lFn.andThen(this).andThen(rFn)::apply;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default <Z> Fn1<Z, B> contraMap(Function<? super Z, ? extends A> fn) {
-        return (Fn1<Z, B>) Profunctor.super.<Z>contraMap(fn);
+        return Profunctor.super.<Z>contraMap(fn).downcast();
     }
 
     /**

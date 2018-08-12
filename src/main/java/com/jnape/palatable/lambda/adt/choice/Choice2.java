@@ -55,7 +55,7 @@ public abstract class Choice2<A, B> implements
 
     @Override
     public final <C> Choice2<A, C> fmap(Function<? super B, ? extends C> fn) {
-        return Monad.super.<C>fmap(fn).coerce();
+        return Monad.super.<C>fmap(fn).downcast();
     }
 
     @Override
@@ -83,23 +83,23 @@ public abstract class Choice2<A, B> implements
 
     @Override
     public <C> Choice2<A, C> zip(Applicative<Function<? super B, ? extends C>, Choice2<A, ?>> appFn) {
-        return appFn.<Choice2<A, Function<? super B, ? extends C>>>coerce()
+        return appFn.<Choice2<A, Function<? super B, ? extends C>>>downcast()
                 .match(Choice2::a, this::biMapR);
     }
 
     @Override
     public <C> Choice2<A, C> discardL(Applicative<C, Choice2<A, ?>> appB) {
-        return Monad.super.discardL(appB).coerce();
+        return Monad.super.discardL(appB).downcast();
     }
 
     @Override
     public <C> Choice2<A, B> discardR(Applicative<C, Choice2<A, ?>> appB) {
-        return Monad.super.discardR(appB).coerce();
+        return Monad.super.discardR(appB).downcast();
     }
 
     @Override
     public final <C> Choice2<A, C> flatMap(Function<? super B, ? extends Monad<C, Choice2<A, ?>>> f) {
-        return match(Choice2::a, b -> f.apply(b).coerce());
+        return match(Choice2::a, b -> f.apply(b).downcast());
     }
 
     @Override
@@ -107,7 +107,7 @@ public abstract class Choice2<A, B> implements
     public <C, App extends Applicative, TravB extends Traversable<C, Choice2<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(a -> pure.apply((TravB) a(a)),
-                     b -> fn.apply(b).fmap(Choice2::b).<TravB>fmap(Applicative::coerce).coerce());
+                     b -> fn.apply(b).fmap(Choice2::b).<TravB>fmap(Applicative::downcast).downcast());
     }
 
     /**
