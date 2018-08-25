@@ -4,6 +4,7 @@ import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.product.Product3;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -27,7 +28,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.consta
 public class Tuple3<_1, _2, _3> extends HCons<_1, Tuple2<_2, _3>> implements
         Product3<_1, _2, _3>,
         Monad<_3, Tuple3<_1, _2, ?>>,
-        Bifunctor<_2, _3, Tuple3<_1, ?, ?>>,
+        Bifunctor<_2, _3, Tuple3<_1, _2, ?>, Tuple3<_1, ?, ?>>,
         Traversable<_3, Tuple3<_1, _2, ?>> {
 
     private final _1 _1;
@@ -131,7 +132,7 @@ public class Tuple3<_1, _2, _3> extends HCons<_1, Tuple2<_2, _3>> implements
     @SuppressWarnings("unchecked")
     public <_3Prime, App extends Applicative, TravB extends Traversable<_3Prime, Tuple3<_1, _2, ?>>, AppB extends Applicative<_3Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _3, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_3).fmap(_3Prime -> fmap(constantly(_3Prime))).<TravB>fmap(Applicative::downcast).downcast();
+        return fn.apply(_3).fmap(_3Prime -> fmap(constantly(_3Prime))).<TravB>fmap(HigherKindedType::downcast).downcast();
     }
 
     /**

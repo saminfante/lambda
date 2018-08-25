@@ -48,7 +48,7 @@ public final class LiftA6<A, B, C, D, E, F, G,
     @Override
     public AppG apply(Fn6<A, B, C, D, E, F, G> fn, AppA appA, AppB appB, AppC appC, AppD appD, AppE appE,
                       AppF appF) {
-        return appF.zip(appE.zip(appD.zip(appC.zip(appB.zip(appA.fmap(fn)))))).coerce();
+        return appF.zip(appE.zip(appD.zip(appC.zip(appB.zip(appA.fmap(fn)))))).downcast();
     }
 
 

@@ -4,6 +4,7 @@ import com.jnape.palatable.lambda.functions.builtin.fn2.Peek;
 import com.jnape.palatable.lambda.functions.specialized.checked.CheckedSupplier;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -220,7 +221,7 @@ public abstract class Maybe<A> implements Monad<A, Maybe>, Traversable<A, Maybe>
         public <B, App extends Applicative, TravB extends Traversable<B, Maybe>,
                 AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
                 Function<? super A, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-            return fn.apply(a).fmap(Just::new).<TravB>fmap(Applicative::downcast).downcast();
+            return fn.apply(a).fmap(Just::new).<TravB>fmap(HigherKindedType::downcast).downcast();
         }
 
         @Override

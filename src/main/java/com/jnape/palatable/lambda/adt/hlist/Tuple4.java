@@ -4,6 +4,7 @@ import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.product.Product4;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -28,7 +29,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.consta
 public class Tuple4<_1, _2, _3, _4> extends HCons<_1, Tuple3<_2, _3, _4>> implements
         Product4<_1, _2, _3, _4>,
         Monad<_4, Tuple4<_1, _2, _3, ?>>,
-        Bifunctor<_3, _4, Tuple4<_1, _2, ?, ?>>,
+        Bifunctor<_3, _4, Tuple4<_1, _2, _3, ?>, Tuple4<_1, _2, ?, ?>>,
         Traversable<_4, Tuple4<_1, _2, _3, ?>> {
 
     private final _1 _1;
@@ -100,6 +101,7 @@ public class Tuple4<_1, _2, _3, _4> extends HCons<_1, Tuple3<_2, _3, _4>> implem
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <_3Prime> Tuple4<_1, _2, _3Prime, _4> biMapL(Function<? super _3, ? extends _3Prime> fn) {
         return (Tuple4<_1, _2, _3Prime, _4>) Bifunctor.super.<_3Prime>biMapL(fn);
     }
@@ -146,7 +148,7 @@ public class Tuple4<_1, _2, _3, _4> extends HCons<_1, Tuple3<_2, _3, _4>> implem
     @SuppressWarnings("unchecked")
     public <_4Prime, App extends Applicative, TravB extends Traversable<_4Prime, Tuple4<_1, _2, _3, ?>>, AppB extends Applicative<_4Prime, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _4, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(_4).fmap(_4Prime -> fmap(constantly(_4Prime))).<TravB>fmap(Applicative::downcast).downcast();
+        return fn.apply(_4).fmap(_4Prime -> fmap(constantly(_4Prime))).<TravB>fmap(HigherKindedType::downcast).downcast();
     }
 
     /**

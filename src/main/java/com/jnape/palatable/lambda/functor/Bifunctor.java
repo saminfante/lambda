@@ -16,7 +16,10 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @see com.jnape.palatable.lambda.adt.hlist.Tuple2
  */
 @FunctionalInterface
-public interface Bifunctor<A, B, BF extends Bifunctor> extends BoundedBifunctor<A, B, Object, Object, BF> {
+public interface Bifunctor<A, B, F extends Functor, BF extends Bifunctor> extends
+        Functor<B, F>,
+        BoundedBifunctor<A, B, Object, Object, BF>,
+        HigherKindedType<F> {
 
     /**
      * Covariantly map over the left parameter.
@@ -25,7 +28,7 @@ public interface Bifunctor<A, B, BF extends Bifunctor> extends BoundedBifunctor<
      * @param fn  the mapping function
      * @return a bifunctor over C (the new left parameter) and B (the same right parameter)
      */
-    default <C> Bifunctor<C, B, BF> biMapL(Function<? super A, ? extends C> fn) {
+    default <C> Bifunctor<C, B, ? extends BF, BF> biMapL(Function<? super A, ? extends C> fn) {
         return biMap(fn, id());
     }
 
@@ -37,8 +40,9 @@ public interface Bifunctor<A, B, BF extends Bifunctor> extends BoundedBifunctor<
      * @param fn  the mapping function
      * @return a bifunctor over A (the same left parameter) and C (the new right parameter)
      */
-    default <C> Bifunctor<A, C, BF> biMapR(Function<? super B, ? extends C> fn) {
-        return biMap(id(), fn);
+    @SuppressWarnings("unchecked")
+    default <C> Bifunctor<A, C, F, BF> biMapR(Function<? super B, ? extends C> fn) {
+        return (Bifunctor<A, C, F, BF>) biMap(id(), fn);
     }
 
     /**
@@ -51,5 +55,14 @@ public interface Bifunctor<A, B, BF extends Bifunctor> extends BoundedBifunctor<
      * @param rFn the right parameter mapping function
      * @return a bifunctor over C (the new left parameter type) and D (the new right parameter type)
      */
-    <C, D> Bifunctor<C, D, BF> biMap(Function<? super A, ? extends C> lFn, Function<? super B, ? extends D> rFn);
+    <C, D> Bifunctor<C, D, ? extends BF, BF> biMap(Function<? super A, ? extends C> lFn,
+                                                   Function<? super B, ? extends D> rFn);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default <C> Bifunctor<A, C, F, BF> fmap(Function<? super B, ? extends C> fn) {
+        return biMapR(fn);
+    }
 }

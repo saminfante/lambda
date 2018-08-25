@@ -1,6 +1,7 @@
 package com.jnape.palatable.lambda.monad;
 
 import com.jnape.palatable.lambda.functor.Applicative;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 
 import java.util.function.Function;
 
@@ -23,7 +24,7 @@ import java.util.function.Function;
  * @param <A> the type of the parameter
  * @param <M> the unification parameter to more tightly type-constrain Monads to themselves
  */
-public interface Monad<A, M extends Monad> extends Applicative<A, M> {
+public interface Monad<A, M extends Monad> extends Applicative<A, M>, HigherKindedType<M> {
 
     /**
      * Chain dependent computations that may continue or short-circuit based on previous results.

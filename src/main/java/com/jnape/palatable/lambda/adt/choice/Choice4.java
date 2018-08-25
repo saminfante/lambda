@@ -7,6 +7,7 @@ import com.jnape.palatable.lambda.adt.hlist.HList;
 import com.jnape.palatable.lambda.adt.hlist.Tuple4;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -28,7 +29,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn2.Into4.into4;
 public abstract class Choice4<A, B, C, D> implements
         CoProduct4<A, B, C, D, Choice4<A, B, C, D>>,
         Monad<D, Choice4<A, B, C, ?>>,
-        Bifunctor<C, D, Choice4<A, B, ?, ?>>,
+        Bifunctor<C, D, Choice4<A, B, C, ?>, Choice4<A, B, ?, ?>>,
         Traversable<D, Choice4<A, B, C, ?>> {
 
     private Choice4() {
@@ -69,9 +70,8 @@ public abstract class Choice4<A, B, C, D> implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final <E> Choice4<A, B, C, E> biMapR(Function<? super D, ? extends E> fn) {
-        return (Choice4<A, B, C, E>) Bifunctor.super.biMapR(fn);
+        return Bifunctor.super.biMapR(fn).downcast();
     }
 
     @Override
@@ -113,7 +113,7 @@ public abstract class Choice4<A, B, C, D> implements
         return match(a -> pure.apply((TravB) Choice4.<A, B, C, E>a(a)).downcast(),
                      b -> pure.apply((TravB) Choice4.<A, B, C, E>b(b)).downcast(),
                      c -> pure.apply((TravB) Choice4.<A, B, C, E>c(c)),
-                     d -> fn.apply(d).fmap(Choice4::d).<TravB>fmap(Applicative::downcast).downcast());
+                     d -> fn.apply(d).<Choice4<A, B, C, E>>fmap(Choice4::d).<TravB>fmap(HigherKindedType::downcast).downcast());
     }
 
     /**

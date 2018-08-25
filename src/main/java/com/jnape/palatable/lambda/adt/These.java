@@ -5,6 +5,7 @@ import com.jnape.palatable.lambda.adt.coproduct.CoProduct3;
 import com.jnape.palatable.lambda.adt.hlist.Tuple2;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -23,7 +24,11 @@ import static com.jnape.palatable.lambda.functions.builtin.fn2.Into.into;
  * @param <A> the first possible type
  * @param <B> the second possible type
  */
-public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, These<A, B>>, Monad<B, These<A, ?>>, Bifunctor<A, B, These<?, ?>>, Traversable<B, These<A, ?>> {
+public abstract class These<A, B> implements
+        CoProduct3<A, B, Tuple2<A, B>, These<A, B>>,
+        Monad<B, These<A, ?>>,
+        Bifunctor<A, B, These<A, ?>, These<?, ?>>,
+        Traversable<B, These<A, ?>> {
 
     private These() {
     }
@@ -58,8 +63,8 @@ public abstract class These<A, B> implements CoProduct3<A, B, Tuple2<A, B>, Thes
     public <C, App extends Applicative, TravB extends Traversable<C, These<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(a -> pure.apply((TravB) a(a)),
-                     b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::downcast).downcast(),
-                     into((a, b) -> fn.apply(b).fmap(c -> both(a, c)).<TravB>fmap(Applicative::downcast).downcast()));
+                     b -> fn.apply(b).fmap(this::pure).<TravB>fmap(HigherKindedType::downcast).downcast(),
+                     into((a, b) -> fn.apply(b).fmap(c -> both(a, c)).<TravB>fmap(HigherKindedType::downcast).downcast()));
     }
 
     /**

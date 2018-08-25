@@ -3,6 +3,7 @@ package com.jnape.palatable.lambda.adt.hlist;
 import com.jnape.palatable.lambda.adt.hlist.HList.HCons;
 import com.jnape.palatable.lambda.adt.hlist.HList.HNil;
 import com.jnape.palatable.lambda.functor.Applicative;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -64,7 +65,7 @@ public class SingletonHList<_1> extends HCons<_1, HNil> implements Monad<_1, Sin
     @SuppressWarnings("unchecked")
     public <B, App extends Applicative, TravB extends Traversable<B, SingletonHList>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super _1, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return fn.apply(head()).fmap(SingletonHList::new).<TravB>fmap(Applicative::downcast).downcast();
+        return fn.apply(head()).fmap(SingletonHList::new).<TravB>fmap(HigherKindedType::downcast).downcast();
     }
 
     /**

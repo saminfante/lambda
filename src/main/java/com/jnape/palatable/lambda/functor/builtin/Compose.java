@@ -1,6 +1,7 @@
 package com.jnape.palatable.lambda.functor.builtin;
 
 import com.jnape.palatable.lambda.functor.Applicative;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ public final class Compose<F extends Applicative, G extends Applicative, A> impl
     }
 
     public <GA extends Applicative<A, G>, FGA extends Applicative<GA, F>> FGA getCompose() {
-        return fga.<GA>fmap(Applicative::downcast).downcast();
+        return fga.<GA>fmap(HigherKindedType::downcast).downcast();
     }
 
     @Override

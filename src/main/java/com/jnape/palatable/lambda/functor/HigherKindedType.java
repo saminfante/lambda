@@ -1,6 +1,6 @@
 package com.jnape.palatable.lambda.functor;
 
-public interface HigherKindedType {
+public interface HigherKindedType<HKT extends HigherKindedType> {
 
     /**
      * Convenience method for coercing this hk instance into another concrete type. Unsafe.
@@ -9,7 +9,7 @@ public interface HigherKindedType {
      * @return the coerced hk type
      */
     @SuppressWarnings("unchecked")
-    default <Concrete extends HigherKindedType> Concrete downcast() {
+    default <Concrete extends HigherKindedType<? extends HKT>> Concrete downcast() {
         return (Concrete) this;
     }
 }

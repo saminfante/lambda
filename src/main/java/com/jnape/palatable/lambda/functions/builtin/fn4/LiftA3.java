@@ -35,7 +35,7 @@ public final class LiftA3<A, B, C, D,
 
     @Override
     public AppD apply(Fn3<A, B, C, D> fn, AppA appA, AppB appB, AppC appC) {
-        return appC.zip(appB.zip(appA.fmap(fn))).coerce();
+        return appC.zip(appB.zip(appA.fmap(fn))).downcast();
     }
 
     @SuppressWarnings("unchecked")

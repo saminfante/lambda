@@ -52,7 +52,7 @@ public final class LiftA7<A, B, C, D, E, F, G, H,
     @Override
     public AppH apply(Fn7<A, B, C, D, E, F, G, H> fn, AppA appA, AppB appB, AppC appC, AppD appD, AppE appE,
                       AppF appF, AppG appG) {
-        return appG.zip(appF.zip(appE.zip(appD.zip(appC.zip(appB.zip(appA.fmap(fn))))))).coerce();
+        return appG.zip(appF.zip(appE.zip(appD.zip(appC.zip(appB.zip(appA.fmap(fn))))))).downcast();
     }
 
     @SuppressWarnings("unchecked")

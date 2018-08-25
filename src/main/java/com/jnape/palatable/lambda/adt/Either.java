@@ -9,6 +9,7 @@ import com.jnape.palatable.lambda.functions.specialized.checked.CheckedRunnable;
 import com.jnape.palatable.lambda.functions.specialized.checked.CheckedSupplier;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -30,7 +31,11 @@ import static java.util.Arrays.asList;
  * @param <L> The left parameter type
  * @param <R> The right parameter type
  */
-public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Monad<R, Either<L, ?>>, Traversable<R, Either<L, ?>>, Bifunctor<L, R, Either> {
+public abstract class Either<L, R> implements
+        CoProduct2<L, R, Either<L, R>>,
+        Monad<R, Either<L, ?>>,
+        Traversable<R, Either<L, ?>>,
+        Bifunctor<L, R, Either<L, ?>, Either<?, ?>> {
 
     private Either() {
     }
@@ -124,7 +129,7 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
      */
     @Override
     public <R2> Either<L, R2> flatMap(Function<? super R, ? extends Monad<R2, Either<L, ?>>> rightFn) {
-        return flatMap(Either::left, rightFn.andThen(Applicative::downcast));
+        return match(Either::left, rightFn.andThen(HigherKindedType::downcast));
     }
 
     /**
@@ -222,9 +227,8 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final <R2> Either<L, R2> biMapR(Function<? super R, ? extends R2> fn) {
-        return (Either<L, R2>) Bifunctor.super.biMapR(fn);
+        return Bifunctor.super.biMapR(fn).downcast();
     }
 
     @Override
@@ -258,7 +262,8 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
     public final <R2, App extends Applicative, TravB extends Traversable<R2, Either<L, ?>>, AppB extends Applicative<R2, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super R, ? extends AppB> fn,
             Function<? super TravB, ? extends AppTrav> pure) {
-        return (AppTrav) match(l -> pure.apply((TravB) left(l)), r -> fn.apply(r).fmap(Either::right));
+        return (AppTrav) match(l -> pure.apply((TravB) left(l)),
+                               r -> fn.apply(r).fmap(Either::right));
     }
 
     /**

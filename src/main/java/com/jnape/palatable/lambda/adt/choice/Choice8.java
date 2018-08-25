@@ -7,6 +7,7 @@ import com.jnape.palatable.lambda.adt.hlist.HList;
 import com.jnape.palatable.lambda.adt.hlist.Tuple8;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Bifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -31,7 +32,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn2.Into8.into8;
 public abstract class Choice8<A, B, C, D, E, F, G, H> implements
         CoProduct8<A, B, C, D, E, F, G, H, Choice8<A, B, C, D, E, F, G, H>>,
         Monad<H, Choice8<A, B, C, D, E, F, G, ?>>,
-        Bifunctor<G, H, Choice8<A, B, C, D, E, F, ?, ?>>,
+        Bifunctor<G, H, Choice8<A, B, C, D, E, F, G, ?>, Choice8<A, B, C, D, E, F, ?, ?>>,
         Traversable<H, Choice8<A, B, C, D, E, F, G, ?>> {
 
     private Choice8() {
@@ -72,9 +73,8 @@ public abstract class Choice8<A, B, C, D, E, F, G, H> implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <I> Choice8<A, B, C, D, E, F, G, I> biMapR(Function<? super H, ? extends I> fn) {
-        return (Choice8<A, B, C, D, E, F, G, I>) Bifunctor.super.biMapR(fn);
+        return Bifunctor.super.biMapR(fn).downcast();
     }
 
     @Override
@@ -122,7 +122,7 @@ public abstract class Choice8<A, B, C, D, E, F, G, H> implements
                      e -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>e(e)),
                      f -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>f(f)),
                      g -> pure.apply((TravB) Choice8.<A, B, C, D, E, F, G, I>g(g)),
-                     h -> fn.apply(h).fmap(Choice8::h).<TravB>fmap(Applicative::downcast).downcast());
+                     h -> fn.apply(h).<Choice8<A, B, C, D, E, F, G, I>>fmap(Choice8::h).<TravB>fmap(HigherKindedType::downcast).downcast());
     }
 
     /**

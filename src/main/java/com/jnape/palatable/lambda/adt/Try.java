@@ -6,6 +6,7 @@ import com.jnape.palatable.lambda.functions.specialized.checked.CheckedRunnable;
 import com.jnape.palatable.lambda.functions.specialized.checked.CheckedSupplier;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.BoundedBifunctor;
+import com.jnape.palatable.lambda.functor.HigherKindedType;
 import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.traversable.Traversable;
 
@@ -174,7 +175,7 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
     public <B, App extends Applicative, TravB extends Traversable<B, Try<T, ?>>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super A, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(t -> pure.apply((TravB) failure(t)),
-                     a -> fn.apply(a).fmap(Try::success).<TravB>fmap(Applicative::downcast).downcast());
+                     a -> fn.apply(a).<Try<T, B>>fmap(Try::success).<TravB>fmap(HigherKindedType::downcast).downcast());
     }
 
     @Override

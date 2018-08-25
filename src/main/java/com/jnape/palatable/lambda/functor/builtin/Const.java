@@ -17,7 +17,10 @@ import java.util.function.Function;
  * @param <A> the left parameter type, and the type of the stored value
  * @param <B> the right (phantom) parameter type
  */
-public final class Const<A, B> implements Monad<B, Const<A, ?>>, Bifunctor<A, B, Const>, Traversable<B, Const<A, ?>> {
+public final class Const<A, B> implements
+        Monad<B, Const<A, ?>>,
+        Bifunctor<A, B, Const<A, ?>, Const<?, ?>>,
+        Traversable<B, Const<A, ?>> {
 
     private final A a;
 
@@ -101,9 +104,8 @@ public final class Const<A, B> implements Monad<B, Const<A, ?>>, Bifunctor<A, B,
      * @return a Const over A (the same value) and C (the new phantom parameter)
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <C> Const<A, C> biMapR(Function<? super B, ? extends C> fn) {
-        return (Const<A, C>) Bifunctor.super.biMapR(fn);
+        return Bifunctor.super.biMapR(fn).downcast();
     }
 
     /**
