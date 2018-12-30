@@ -4,7 +4,7 @@ import com.jnape.palatable.lambda.adt.Maybe;
 import com.jnape.palatable.lambda.adt.hlist.Tuple2;
 import com.jnape.palatable.lambda.functions.Fn2;
 import com.jnape.palatable.lambda.functions.builtin.fn2.Map;
-import com.jnape.palatable.lambda.lens.LensLike;
+import com.jnape.palatable.lambda.optics.LensLike;
 import com.jnape.palatable.lambda.monoid.builtin.Present;
 
 import java.util.Objects;
@@ -15,8 +15,8 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.CatMaybes.catMayb
 import static com.jnape.palatable.lambda.functions.builtin.fn2.CartesianProduct.cartesianProduct;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Into.into;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.ReduceLeft.reduceLeft;
-import static com.jnape.palatable.lambda.lens.functions.Set.set;
-import static com.jnape.palatable.lambda.lens.functions.View.view;
+import static com.jnape.palatable.lambda.optics.functions.Set.set;
+import static com.jnape.palatable.lambda.optics.functions.View.view;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Arrays.asList;

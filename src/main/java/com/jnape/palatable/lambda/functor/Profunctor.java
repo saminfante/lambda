@@ -1,7 +1,7 @@
 package com.jnape.palatable.lambda.functor;
 
 import com.jnape.palatable.lambda.functions.Fn1;
-import com.jnape.palatable.lambda.lens.Lens;
+import com.jnape.palatable.lambda.optics.Lens;
 
 import java.util.function.Function;
 

@@ -12,10 +12,10 @@ import com.jnape.palatable.lambda.adt.hlist.Tuple6;
 import com.jnape.palatable.lambda.adt.hlist.Tuple7;
 import com.jnape.palatable.lambda.adt.hlist.Tuple8;
 import com.jnape.palatable.lambda.functions.builtin.fn2.Both;
-import com.jnape.palatable.lambda.lens.Lens;
+import com.jnape.palatable.lambda.optics.Lens;
 
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Into.into;
-import static com.jnape.palatable.lambda.lens.lenses.HMapLens.valueAt;
+import static com.jnape.palatable.lambda.optics.lenses.HMapLens.valueAt;
 
 /**
  * A lens that focuses on the {@link HList heterogeneous list} of values pointed at by one or more

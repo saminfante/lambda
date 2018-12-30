@@ -3,15 +3,15 @@ package testsupport;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.Profunctor;
-import com.jnape.palatable.lambda.lens.Iso;
-import com.jnape.palatable.lambda.lens.LensLike;
+import com.jnape.palatable.lambda.optics.Iso;
+import com.jnape.palatable.lambda.optics.LensLike;
 import com.jnape.palatable.lambda.monad.Monad;
 
 import java.util.Objects;
 import java.util.function.Function;
 
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Both.both;
-import static com.jnape.palatable.lambda.lens.functions.View.view;
+import static com.jnape.palatable.lambda.optics.functions.View.view;
 
 public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     private final S               s;

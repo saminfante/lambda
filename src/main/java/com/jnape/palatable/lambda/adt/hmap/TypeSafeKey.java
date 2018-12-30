@@ -3,8 +3,8 @@ package com.jnape.palatable.lambda.adt.hmap;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.Profunctor;
-import com.jnape.palatable.lambda.lens.Iso;
-import com.jnape.palatable.lambda.lens.LensLike;
+import com.jnape.palatable.lambda.optics.Iso;
+import com.jnape.palatable.lambda.optics.LensLike;
 
 import java.util.Objects;
 

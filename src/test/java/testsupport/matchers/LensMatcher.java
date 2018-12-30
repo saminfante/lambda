@@ -1,11 +1,9 @@
 package testsupport.matchers;
 
 import com.jnape.palatable.lambda.adt.hlist.Tuple2;
-import com.jnape.palatable.lambda.lens.Lens;
+import com.jnape.palatable.lambda.optics.Lens;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-
-import java.util.HashSet;
 
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Empty.empty;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.All.all;
@@ -13,8 +11,8 @@ import static com.jnape.palatable.lambda.functions.builtin.fn2.CartesianProduct.
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Filter.filter;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Into.into;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.ToCollection.toCollection;
-import static com.jnape.palatable.lambda.lens.functions.Set.set;
-import static com.jnape.palatable.lambda.lens.functions.View.view;
+import static com.jnape.palatable.lambda.optics.functions.Set.set;
+import static com.jnape.palatable.lambda.optics.functions.View.view;
 
 public class LensMatcher<S, A> extends BaseMatcher<Lens<S, S, A, A>> {
 
