@@ -169,37 +169,13 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
     }
 
     @Override
-    default <C, D> Lens<S, T, C, D> andThen(LensLike<A, B, C, D, ?> f) {
-        return toLens().andThen(f);
-    }
-
-    /**
-     * Left-to-right composition of {@link Iso}.
-     *
-     * @param f   the iso to apply after this one
-     * @param <C> the smaller type the first larger type can be viewed as
-     * @param <D> the smaller type that can be viewed as the second larger type
-     * @return the composed {@link Iso}
-     */
-    default <C, D> Iso<S, T, C, D> andThen(Iso<A, B, C, D> f) {
-        return unIso().into((sa, bt) -> f.unIso().into((ac, db) -> iso(sa.andThen(ac), db.andThen(bt))));
-    }
-
-    /**
-     * Right-to-left composition of {@link Iso}.
-     *
-     * @param g   the iso to apply before this one
-     * @param <Q> the larger type that can be viewed as the first smaller type
-     * @param <R> the larger type the second smaller type can be viewed as
-     * @return the composed {@link Iso}
-     */
-    default <Q, R> Iso<Q, R, A, B> compose(Iso<Q, R, S, T> g) {
-        return g.andThen(this);
+    default <Z, C> Iso<S, T, Z, C> andThen(Optic<? super Profunctor, ? super Functor, A, B, Z, C> f) {
+        return iso(Optic.super.andThen(f));
     }
 
     @Override
-    default <Q, R> Lens<Q, R, A, B> compose(LensLike<Q, R, S, T, ?> f) {
-        return toLens().compose(f);
+    default <R, U> Iso<R, U, A, B> compose(Optic<? super Profunctor, ? super Functor, R, U, S, T> g) {
+        return iso(Optic.super.compose(g));
     }
 
     /**
@@ -249,7 +225,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
      * @param <A> the type of both "smaller" values
      */
     @FunctionalInterface
-    interface Simple<S, A> extends Iso<S, S, A, A>, LensLike.Simple<S, A, Iso> {
+    interface Simple<S, A> extends Iso<S, S, A, A>, Optic.Simple<Profunctor, Functor, S, A>, LensLike.Simple<S, A, Iso> {
 
         /**
          * Compose two simple isos from right to left.
@@ -289,13 +265,13 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
         }
 
         @Override
-        default <R> Lens.Simple<R, A> compose(LensLike.Simple<R, S, ?> g) {
-            return toLens().compose(g);
+        default <B> Iso.Simple<S, B> andThen(Optic.Simple<? super Profunctor, ? super Functor, A, B> f) {
+            return adapt(Iso.super.andThen(f));
         }
 
         @Override
-        default <B> Lens.Simple<S, B> andThen(LensLike.Simple<A, B, ?> f) {
-            return toLens().andThen(f);
+        default <R> Iso.Simple<R, A> compose(Optic.Simple<? super Profunctor, ? super Functor, R, S> g) {
+            return adapt(Iso.super.compose(g));
         }
 
         /**

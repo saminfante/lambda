@@ -14,7 +14,6 @@ import java.util.function.Function;
 import static com.jnape.palatable.lambda.functions.Fn1.fn1;
 import static com.jnape.palatable.lambda.optics.Iso.iso;
 import static com.jnape.palatable.lambda.optics.Lens.Simple.adapt;
-import static com.jnape.palatable.lambda.optics.functions.Over.over;
 import static com.jnape.palatable.lambda.optics.functions.Set.set;
 import static com.jnape.palatable.lambda.optics.functions.View.view;
 
@@ -230,13 +229,13 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
     }
 
     @Override
-    default <C, D> Lens<S, T, C, D> andThen(LensLike<A, B, C, D, ?> f) {
-        return lens(view(this).fmap(view(f)), (q, b) -> over(this, set(f, b), q));
+    default <C, D> Lens<S, T, C, D> andThen(Optic<? super Fn1, ? super Functor, A, B, C, D> f) {
+        return lens(Optic.super.andThen(f));
     }
 
     @Override
-    default <Q, R> Lens<Q, R, A, B> compose(LensLike<Q, R, S, T, ?> g) {
-        return lens(view(g).fmap(view(this)), (q, b) -> over(g, set(this, b), q));
+    default <R, U> Lens<R, U, A, B> compose(Optic<? super Fn1, ? super Functor, R, U, S, T> g) {
+        return lens(Optic.super.compose(g));
     }
 
     /**
@@ -319,14 +318,16 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
      * @param <A> the type of both "smaller" values
      */
     @FunctionalInterface
-    interface Simple<S, A> extends Lens<S, S, A, A>, LensLike.Simple<S, A, Lens> {
+    interface Simple<S, A> extends Lens<S, S, A, A>, Optic.Simple<Fn1, Functor, S, A>, LensLike.Simple<S, A, Lens> {
 
-        default <R> Lens.Simple<R, A> compose(LensLike.Simple<R, S, ?> g) {
-            return Lens.Simple.adapt(Lens.super.compose(g));
+        @Override
+        default <B> Lens.Simple<S, B> andThen(Optic.Simple<? super Fn1, ? super Functor, A, B> f) {
+            return Lens.Simple.adapt(Lens.super.andThen(f));
         }
 
-        default <B> Lens.Simple<S, B> andThen(LensLike.Simple<A, B, ?> f) {
-            return Lens.Simple.adapt(Lens.super.andThen(f));
+        @Override
+        default <R> Lens.Simple<R, A> compose(Optic.Simple<? super Fn1, ? super Functor, R, S> g) {
+            return Lens.Simple.adapt(Lens.super.compose(g));
         }
 
         /**

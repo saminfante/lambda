@@ -4,7 +4,7 @@ import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.Fn2;
 import com.jnape.palatable.lambda.functions.Fn3;
 import com.jnape.palatable.lambda.functor.builtin.Identity;
-import com.jnape.palatable.lambda.optics.LensLike;
+import com.jnape.palatable.lambda.optics.Optic;
 
 import java.util.function.Function;
 
@@ -23,7 +23,7 @@ import java.util.function.Function;
  * @see Set
  * @see View
  */
-public final class Over<S, T, A, B> implements Fn3<LensLike<S, T, A, B, ?>, Function<? super A, ? extends B>, S, T> {
+public final class Over<S, T, A, B> implements Fn3<Optic<? super Fn1, ? super Identity, S, T, A, B>, Function<? super A, ? extends B>, S, T> {
 
     private static final Over INSTANCE = new Over();
 
@@ -31,8 +31,10 @@ public final class Over<S, T, A, B> implements Fn3<LensLike<S, T, A, B, ?>, Func
     }
 
     @Override
-    public T apply(LensLike<S, T, A, B, ?> lens, Function<? super A, ? extends B> fn, S s) {
-        return lens.<Identity, Identity<T>, Identity<B>>apply(fn.andThen((Function<B, Identity<B>>) Identity::new), s).runIdentity();
+    public T apply(Optic<? super Fn1, ? super Identity, S, T, A, B> optic,
+                   Function<? super A, ? extends B> fn,
+                   S s) {
+        return optic.<Fn1, Identity, Fn1<A, Identity<B>>, Fn1<S, Identity<T>>>apply(a -> new Identity<>(fn.apply(a))).apply(s).runIdentity();
     }
 
     @SuppressWarnings("unchecked")
@@ -40,15 +42,18 @@ public final class Over<S, T, A, B> implements Fn3<LensLike<S, T, A, B, ?>, Func
         return (Over<S, T, A, B>) INSTANCE;
     }
 
-    public static <S, T, A, B> Fn2<Function<? super A, ? extends B>, S, T> over(LensLike<S, T, A, B, ?> lens) {
-        return Over.<S, T, A, B>over().apply(lens);
+    public static <S, T, A, B> Fn2<Function<? super A, ? extends B>, S, T> over(
+            Optic<? super Fn1, ? super Identity, S, T, A, B> optic) {
+        return Over.<S, T, A, B>over().apply(optic);
     }
 
-    public static <S, T, A, B> Fn1<S, T> over(LensLike<S, T, A, B, ?> lens, Function<? super A, ? extends B> fn) {
-        return over(lens).apply(fn);
+    public static <S, T, A, B> Fn1<S, T> over(Optic<? super Fn1, ? super Identity, S, T, A, B> optic,
+                                              Function<? super A, ? extends B> fn) {
+        return over(optic).apply(fn);
     }
 
-    public static <S, T, A, B> T over(LensLike<S, T, A, B, ?> lens, Function<? super A, ? extends B> fn, S s) {
-        return over(lens, fn).apply(s);
+    public static <S, T, A, B> T over(Optic<? super Fn1, ? super Identity, S, T, A, B> optic,
+                                      Function<? super A, ? extends B> fn, S s) {
+        return over(optic, fn).apply(s);
     }
 }

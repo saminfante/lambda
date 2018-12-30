@@ -4,7 +4,7 @@ import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.Fn2;
 import com.jnape.palatable.lambda.functions.Fn3;
 import com.jnape.palatable.lambda.functor.builtin.Identity;
-import com.jnape.palatable.lambda.optics.LensLike;
+import com.jnape.palatable.lambda.optics.Optic;
 
 import static com.jnape.palatable.lambda.functions.builtin.fn1.Constantly.constantly;
 import static com.jnape.palatable.lambda.optics.functions.Over.over;
@@ -23,7 +23,7 @@ import static com.jnape.palatable.lambda.optics.functions.Over.over;
  * @see Over
  * @see View
  */
-public final class Set<S, T, A, B> implements Fn3<LensLike<S, T, A, B, ?>, B, S, T> {
+public final class Set<S, T, A, B> implements Fn3<Optic<? super Fn1, ? super Identity, S, T, A, B>, B, S, T> {
 
     private static final Set INSTANCE = new Set();
 
@@ -31,8 +31,8 @@ public final class Set<S, T, A, B> implements Fn3<LensLike<S, T, A, B, ?>, B, S,
     }
 
     @Override
-    public T apply(LensLike<S, T, A, B, ?> lens, B b, S s) {
-        return over(lens, constantly(b), s);
+    public T apply(Optic<? super Fn1, ? super Identity, S, T, A, B> optic, B b, S s) {
+        return over(optic, constantly(b), s);
     }
 
     @SuppressWarnings("unchecked")
@@ -40,15 +40,15 @@ public final class Set<S, T, A, B> implements Fn3<LensLike<S, T, A, B, ?>, B, S,
         return INSTANCE;
     }
 
-    public static <S, T, A, B> Fn2<B, S, T> set(LensLike<S, T, A, B, ?> lens) {
-        return Set.<S, T, A, B>set().apply(lens);
+    public static <S, T, A, B> Fn2<B, S, T> set(Optic<? super Fn1, ? super Identity, S, T, A, B> optic) {
+        return Set.<S, T, A, B>set().apply(optic);
     }
 
-    public static <S, T, A, B> Fn1<S, T> set(LensLike<S, T, A, B, ?> lens, B b) {
-        return set(lens).apply(b);
+    public static <S, T, A, B> Fn1<S, T> set(Optic<? super Fn1, ? super Identity, S, T, A, B> optic, B b) {
+        return set(optic).apply(b);
     }
 
-    public static <S, T, A, B> T set(LensLike<S, T, A, B, ?> lens, B b, S s) {
-        return set(lens, b).apply(s);
+    public static <S, T, A, B> T set(Optic<? super Fn1, ? super Identity, S, T, A, B> optic, B b, S s) {
+        return set(optic, b).apply(s);
     }
 }
