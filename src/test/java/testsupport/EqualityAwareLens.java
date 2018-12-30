@@ -1,11 +1,13 @@
 package testsupport;
 
+import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
+import com.jnape.palatable.lambda.functor.Profunctor;
 import com.jnape.palatable.lambda.functor.builtin.Const;
+import com.jnape.palatable.lambda.monad.Monad;
 import com.jnape.palatable.lambda.optics.Lens;
 import com.jnape.palatable.lambda.optics.LensLike;
-import com.jnape.palatable.lambda.monad.Monad;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -20,9 +22,9 @@ public final class EqualityAwareLens<S, T, A, B> implements Lens<S, T, A, B> {
     }
 
     @Override
-    public <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
-            Function<? super A, ? extends FB> fn, S s) {
-        return lens.apply(fn, s);
+    public <CoP extends Fn1, CoF extends Functor, PAFB extends Profunctor<A, ? extends Functor<B, CoF>, CoP>, PSFT extends Profunctor<S, ? extends Functor<T, CoF>, CoP>> PSFT apply(
+            PAFB pafb) {
+        return lens.apply(pafb);
     }
 
     @Override

@@ -5,11 +5,13 @@ import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functions.builtin.fn2.Both;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
+import com.jnape.palatable.lambda.functor.Profunctor;
 import com.jnape.palatable.lambda.monad.Monad;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static com.jnape.palatable.lambda.functions.Fn1.fn1;
 import static com.jnape.palatable.lambda.optics.Iso.iso;
 import static com.jnape.palatable.lambda.optics.Lens.Simple.adapt;
 import static com.jnape.palatable.lambda.optics.functions.Over.over;
@@ -137,11 +139,18 @@ import static com.jnape.palatable.lambda.optics.functions.View.view;
  * @param <B> the type of the "smaller" update value
  */
 @FunctionalInterface
-public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
+public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensLike<S, T, A, B, Lens> {
+
+    @Override
+    @SuppressWarnings("unchecked")
+    default <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
+            Function<? super A, ? extends FB> fn, S s) {
+        return (FT) this.<Fn1, F, Fn1<A, Functor<B, F>>, Fn1<S, Functor<T, F>>>apply(fn1(fn)).apply(s);
+    }
 
     @Override
     default <U> Lens<S, U, A, B> fmap(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>fmap(fn).coerce ();
+        return LensLike.super.<U>fmap(fn).coerce();
     }
 
     @Override
@@ -243,13 +252,16 @@ public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
      */
     static <S, T, A, B> Lens<S, T, A, B> lens(Function<? super S, ? extends A> getter,
                                               BiFunction<? super S, ? super B, ? extends T> setter) {
+        return lens(Optic.<Fn1, Functor, S, T, A, B, Fn1<A, Functor<B, Functor>>, Fn1<S, Functor<T, Functor>>>optic(
+                afb -> s -> afb.apply(getter.apply(s)).fmap(b -> setter.apply(s, b))));
+    }
+
+    static <S, T, A, B> Lens<S, T, A, B> lens(Optic<? super Fn1, ? super Functor, S, T, A, B> optic) {
         return new Lens<S, T, A, B>() {
             @Override
-            @SuppressWarnings("unchecked")
-            public <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
-                    Function<? super A, ? extends FB> fn,
-                    S s) {
-                return (FT) fn.apply(getter.apply(s)).fmap(b -> setter.apply(s, b));
+            public <CoP extends Fn1, CoF extends Functor, PAFB extends Profunctor<A, ? extends Functor<B, CoF>, CoP>, PSFT extends Profunctor<S, ? extends Functor<T, CoF>, CoP>> PSFT apply(
+                    PAFB pafb) {
+                return optic.apply(pafb);
             }
         };
     }
@@ -325,9 +337,14 @@ public interface Lens<S, T, A, B> extends LensLike<S, T, A, B, Lens> {
          * @param <A>  A/B
          * @return the simple lens
          */
-        @SuppressWarnings("unchecked")
-        static <S, A> Lens.Simple<S, A> adapt(Lens<S, S, A, A> lens) {
-            return lens::apply;
+        static <S, A> Lens.Simple<S, A> adapt(Optic<? super Fn1, ? super Functor, S, S, A, A> lens) {
+            return new Lens.Simple<S, A>() {
+                @Override
+                public <CoP extends Fn1, CoF extends Functor, PAFB extends Profunctor<A, ? extends Functor<A, CoF>, CoP>, PSFT extends Profunctor<S, ? extends Functor<S, CoF>, CoP>> PSFT apply(
+                        PAFB pafb) {
+                    return lens.apply(pafb);
+                }
+            };
         }
 
         /**

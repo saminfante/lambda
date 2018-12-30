@@ -4,6 +4,8 @@ import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.Profunctor;
 
+import java.util.function.Function;
+
 /**
  * A generic supertype representation for profunctor optics.
  * <p>
@@ -40,5 +42,19 @@ public interface Optic<P extends Profunctor, F extends Functor, S, T, A, B> {
             PAFB extends Profunctor<A, ? extends Functor<B, CoF>, CoP>,
             PSFT extends Profunctor<S, ? extends Functor<T, CoF>, CoP>> Fn1<PAFB, PSFT> monomorphize() {
         return this::apply;
+    }
+
+    static <P extends Profunctor, F extends Functor, S, T, A, B,
+            PAFB extends Profunctor<A, ? extends Functor<B, F>, P>,
+            PSFT extends Profunctor<S, ? extends Functor<T, F>, P>> Optic<P, F, S, T, A, B> optic(
+            Function<PAFB, PSFT> fn) {
+        return new Optic<P, F, S, T, A, B>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <CoP extends P, CoF extends F, CoPAFB extends Profunctor<A, ? extends Functor<B, CoF>, CoP>, CoPSFT extends Profunctor<S, ? extends Functor<T, CoF>, CoP>> CoPSFT apply(
+                    CoPAFB coPafb) {
+                return (CoPSFT) fn.apply((PAFB) coPafb);
+            }
+        };
     }
 }
