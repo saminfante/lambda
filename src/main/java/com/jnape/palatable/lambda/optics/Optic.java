@@ -80,6 +80,50 @@ public interface Optic<P extends Profunctor, F extends Functor, S, T, A, B> {
         };
     }
 
+    /**
+     * Contravariantly map <code>S</code> to <code>R</code>, yielding a new optic.
+     *
+     * @param fn  the mapping function
+     * @param <R> the new left side of the output profunctor
+     * @return the new optic
+     */
+    default <R> Optic<P, F, R, T, A, B> mapS(Function<? super R, ? extends S> fn) {
+        return optic(pafb -> apply(pafb).diMapL(fn));
+    }
+
+    /**
+     * Covariantly map <code>T</code> to <code>U</code>, yielding a new optic.
+     *
+     * @param fn  the mapping function
+     * @param <U> the new right side's functor embedding of the output profunctor
+     * @return the new optic
+     */
+    default <U> Optic<P, F, S, U, A, B> mapT(Function<? super T, ? extends U> fn) {
+        return optic(pafb -> apply(pafb).diMapR(ft -> ft.fmap(fn)));
+    }
+
+    /**
+     * Covariantly map <code>A</code> to <code>C</code>, yielding a new optic.
+     *
+     * @param fn  the mapping function
+     * @param <C> the new left side of the input profunctor
+     * @return the new optic
+     */
+    default <C> Optic<P, F, S, T, C, B> mapA(Function<? super A, ? extends C> fn) {
+        return optic(pcfb -> apply(pcfb.diMapL(fn)));
+    }
+
+    /**
+     * Contravariantly map <code>B</code> to <code>Z</code>, yielding a new optic.
+     *
+     * @param fn  the mapping function
+     * @param <Z> the new right side's functor embedding of the input profunctor
+     * @return the new optic
+     */
+    default <Z> Optic<P, F, S, T, A, Z> mapB(Function<? super Z, ? extends B> fn) {
+        return optic(pafz -> apply(pafz.diMapR(fz -> fz.fmap(fn))));
+    }
+
     static <P extends Profunctor, F extends Functor, S, T, A, B,
             PAFB extends Profunctor<A, ? extends Functor<B, F>, P>,
             PSFT extends Profunctor<S, ? extends Functor<T, F>, P>> Optic<P, F, S, T, A, B> optic(

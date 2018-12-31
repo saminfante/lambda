@@ -190,7 +190,7 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
     @Override
     default <R, U> Lens<R, U, A, B> diMap(Function<? super R, ? extends S> lFn,
                                           Function<? super T, ? extends U> rFn) {
-        return LensLike.super.<R, U>diMap(lFn, rFn).coerce();
+        return this.<R>mapS(lFn).mapT(rFn);
     }
 
     @Override
@@ -200,22 +200,22 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
 
     @Override
     default <R> Lens<R, T, A, B> mapS(Function<? super R, ? extends S> fn) {
-        return lens(view(this).compose(fn), (r, b) -> set(this, b, fn.apply(r)));
+        return lens(Optic.super.mapS(fn));
     }
 
     @Override
     default <U> Lens<S, U, A, B> mapT(Function<? super T, ? extends U> fn) {
-        return fmap(fn);
+        return lens(Optic.super.mapT(fn));
     }
 
     @Override
     default <C> Lens<S, T, C, B> mapA(Function<? super A, ? extends C> fn) {
-        return andThen(lens(fn, (a, b) -> b));
+        return lens(Optic.super.mapA(fn));
     }
 
     @Override
     default <Z> Lens<S, T, A, Z> mapB(Function<? super Z, ? extends B> fn) {
-        return lens(view(this), (s, z) -> set(this, fn.apply(z), s));
+        return lens(Optic.super.mapB(fn));
     }
 
     /**

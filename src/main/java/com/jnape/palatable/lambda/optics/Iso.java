@@ -140,7 +140,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
     @Override
     default <R, U> Iso<R, U, A, B> diMap(Function<? super R, ? extends S> lFn,
                                          Function<? super T, ? extends U> rFn) {
-        return LensLike.super.<R, U>diMap(lFn, rFn).coerce();
+        return this.<R>mapS(lFn).mapT(rFn);
     }
 
     @Override
@@ -150,22 +150,22 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
 
     @Override
     default <R> Iso<R, T, A, B> mapS(Function<? super R, ? extends S> fn) {
-        return unIso().biMapL(f -> f.compose(fn)).into(Iso::iso);
+        return iso(Optic.super.mapS(fn));
     }
 
     @Override
     default <U> Iso<S, U, A, B> mapT(Function<? super T, ? extends U> fn) {
-        return unIso().biMapR(f -> f.andThen(fn)).into(Iso::iso);
+        return iso(Optic.super.mapT(fn));
     }
 
     @Override
     default <C> Iso<S, T, C, B> mapA(Function<? super A, ? extends C> fn) {
-        return unIso().biMapL(f -> f.andThen(fn)).into(Iso::iso);
+        return iso(Optic.super.mapA(fn));
     }
 
     @Override
     default <Z> Iso<S, T, A, Z> mapB(Function<? super Z, ? extends B> fn) {
-        return unIso().biMapR(f -> f.compose(fn)).into(Iso::iso);
+        return iso(Optic.super.mapB(fn));
     }
 
     @Override

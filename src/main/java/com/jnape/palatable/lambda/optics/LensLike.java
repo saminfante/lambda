@@ -25,42 +25,6 @@ public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, Lens
     <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
             Function<? super A, ? extends FB> fn, S s);
 
-    /**
-     * Contravariantly map <code>S</code> to <code>R</code>, yielding a new lens.
-     *
-     * @param fn  the mapping function
-     * @param <R> the type of the new "larger" value for reading
-     * @return the new lens
-     */
-    <R> LensLike<R, T, A, B, LL> mapS(Function<? super R, ? extends S> fn);
-
-    /**
-     * Covariantly map <code>T</code> to <code>U</code>, yielding a new lens.
-     *
-     * @param fn  the mapping function
-     * @param <U> the type of the new "larger" value for putting
-     * @return the new lens
-     */
-    <U> LensLike<S, U, A, B, LL> mapT(Function<? super T, ? extends U> fn);
-
-    /**
-     * Covariantly map <code>A</code> to <code>C</code>, yielding a new lens.
-     *
-     * @param fn  the mapping function
-     * @param <C> the type of the new "smaller" value that is read
-     * @return the new lens
-     */
-    <C> LensLike<S, T, C, B, LL> mapA(Function<? super A, ? extends C> fn);
-
-    /**
-     * Contravariantly map <code>B</code> to <code>Z</code>, yielding a new lens.
-     *
-     * @param fn  the mapping function
-     * @param <Z> the type of the new "smaller" update value
-     * @return the new lens
-     */
-    <Z> LensLike<S, T, A, Z, LL> mapB(Function<? super Z, ? extends B> fn);
-
     @Override
     <U> LensLike<S, U, A, B, LL> flatMap(Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, LL>>> f);
 
@@ -99,10 +63,8 @@ public interface LensLike<S, T, A, B, LL extends LensLike> extends Monad<T, Lens
     }
 
     @Override
-    default <R, U> LensLike<R, U, A, B, LL> diMap(Function<? super R, ? extends S> lFn,
-                                                  Function<? super T, ? extends U> rFn) {
-        return this.<R>mapS(lFn).mapT(rFn);
-    }
+    <R, U> LensLike<R, U, A, B, LL> diMap(Function<? super R, ? extends S> lFn,
+                                          Function<? super T, ? extends U> rFn);
 
     @Override
     default <R> LensLike<R, T, A, B, LL> contraMap(Function<? super R, ? extends S> fn) {
