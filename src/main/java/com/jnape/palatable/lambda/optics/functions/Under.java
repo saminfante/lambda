@@ -6,7 +6,6 @@ import com.jnape.palatable.lambda.functions.Fn3;
 import com.jnape.palatable.lambda.functor.builtin.Exchange;
 import com.jnape.palatable.lambda.functor.builtin.Identity;
 import com.jnape.palatable.lambda.optics.Iso;
-import com.jnape.palatable.lambda.optics.LensLike;
 import com.jnape.palatable.lambda.optics.Optic;
 
 import java.util.function.Function;
@@ -17,9 +16,6 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * The inverse of {@link Over}: given an {@link Iso}, a function from <code>T</code> to <code>S</code>, and a "smaller"
  * value <code>B</code>, return a "smaller" value <code>A</code> by traversing around the type ring (<code>B -&gt; T
  * -&gt; S -&gt; A</code>).
- * <p>
- * Note this is only possible for {@link Iso}s and not general {@link LensLike}s because of the mandatory need for the
- * correspondence <code>B -&gt; T</code>.
  *
  * @param <S> the larger type for focusing
  * @param <T> the larger type for mirrored focusing

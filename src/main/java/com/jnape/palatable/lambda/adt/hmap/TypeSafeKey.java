@@ -4,7 +4,7 @@ import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.Profunctor;
 import com.jnape.palatable.lambda.optics.Iso;
-import com.jnape.palatable.lambda.optics.LensLike;
+import com.jnape.palatable.lambda.optics.Optic;
 
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ import java.util.Objects;
 public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
 
     @Override
-    default <U> TypeSafeKey<A, B> discardR(Applicative<U, LensLike<A, ?, B, B, Iso>> appB) {
+    default <U> TypeSafeKey<A, B> discardR(Applicative<U, Iso<A, ?, B, B>> appB) {
         Iso.Simple<A, B> discarded = Iso.Simple.super.discardR(appB);
         return new TypeSafeKey<A, B>() {
             @Override
@@ -48,7 +48,7 @@ public interface TypeSafeKey<A, B> extends Iso.Simple<A, B> {
     /**
      * Left-to-right composition of this {@link TypeSafeKey} with some other {@link Iso}. Because the first parameter
      * fundamentally represents an already stored value type, this is the only composition that is possible for
-     * {@link TypeSafeKey}, which is why only this (and not {@link Iso#compose(Iso)}) is overridden.
+     * {@link TypeSafeKey}, which is why only this (and not {@link Iso#compose(Optic)}) is overridden.
      * <p>
      * Particularly of note is the fact that values stored at this key are still stored as their original manifest
      * type, and are not duplicated - which is to say, putting a value at a key, yielding a new key via composition,

@@ -24,7 +24,7 @@ import static com.jnape.palatable.lambda.optics.Optic.optic;
 import static com.jnape.palatable.lambda.optics.functions.View.view;
 
 /**
- * An {@link Iso} (short for "isomorphism") is an invertible {@link Lens}: a {@link LensLike} encoding of a
+ * An {@link Iso} (short for "isomorphism") is an invertible {@link Lens}: an {@link Optic} encoding of a
  * bi-directional focusing of two types, and like <code>{@link Lens}es</code>, can be <code>{@link View}ed</code>,
  * {@link Set}, and <code>{@link Over}ed</code>.
  * <p>
@@ -52,13 +52,9 @@ import static com.jnape.palatable.lambda.optics.functions.View.view;
  * @param <B> the smaller type for mirrored focusing
  */
 @FunctionalInterface
-public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>, LensLike<S, T, A, B, Iso> {
-
-    @Override
-    default <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
-            Function<? super A, ? extends FB> fn, S s) {
-        return this.<Fn1, F, Fn1<A, FB>, Fn1<S, FT>>apply(fn1(fn)).apply(s);
-    }
+public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
+        Monad<T, Iso<S, ?, A, B>>,
+        Profunctor<S, T, Iso<?, ?, A, B>> {
 
     /**
      * Convert this {@link Iso} into a {@link Lens}.
@@ -93,7 +89,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
 
     @Override
     default <U> Iso<S, U, A, B> fmap(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>fmap(fn).coerce();
+        return Monad.super.<U>fmap(fn).coerce();
     }
 
     @Override
@@ -102,22 +98,22 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
     }
 
     @Override
-    default <U> Iso<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Iso>> appFn) {
-        return LensLike.super.zip(appFn).coerce();
+    default <U> Iso<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, Iso<S, ?, A, B>> appFn) {
+        return Monad.super.zip(appFn).coerce();
     }
 
     @Override
-    default <U> Iso<S, U, A, B> discardL(Applicative<U, LensLike<S, ?, A, B, Iso>> appB) {
-        return LensLike.super.discardL(appB).coerce();
+    default <U> Iso<S, U, A, B> discardL(Applicative<U, Iso<S, ?, A, B>> appB) {
+        return Monad.super.discardL(appB).coerce();
     }
 
     @Override
-    default <U> Iso<S, T, A, B> discardR(Applicative<U, LensLike<S, ?, A, B, Iso>> appB) {
-        return LensLike.super.discardR(appB).coerce();
+    default <U> Iso<S, T, A, B> discardR(Applicative<U, Iso<S, ?, A, B>> appB) {
+        return Monad.super.discardR(appB).coerce();
     }
 
     @Override
-    default <U> Iso<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Iso>>> fn) {
+    default <U> Iso<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, Iso<S, ?, A, B>>> fn) {
         return unIso().fmap(bt -> Fn2.<B, B, U>fn2(fn1(bt.andThen(fn.<Iso<S, U, A, B>>andThen(Applicative::coerce))
                                                                .andThen(Iso::unIso)
                                                                .andThen(Tuple2::_2)
@@ -129,12 +125,12 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
 
     @Override
     default <R> Iso<R, T, A, B> diMapL(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>diMapL(fn).coerce();
+        return (Iso<R, T, A, B>) Profunctor.super.<R>diMapL(fn);
     }
 
     @Override
     default <U> Iso<S, U, A, B> diMapR(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>diMapR(fn).coerce();
+        return (Iso<S, U, A, B>) Profunctor.super.<U>diMapR(fn);
     }
 
     @Override
@@ -145,7 +141,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
 
     @Override
     default <R> Iso<R, T, A, B> contraMap(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>contraMap(fn).coerce();
+        return (Iso<R, T, A, B>) Profunctor.super.<R>contraMap(fn);
     }
 
     @Override
@@ -225,7 +221,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
      * @param <A> the type of both "smaller" values
      */
     @FunctionalInterface
-    interface Simple<S, A> extends Iso<S, S, A, A>, Optic.Simple<Profunctor, Functor, S, A>, LensLike.Simple<S, A, Iso> {
+    interface Simple<S, A> extends Iso<S, S, A, A>, Optic.Simple<Profunctor, Functor, S, A> {
 
         /**
          * Compose two simple isos from right to left.
@@ -260,7 +256,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor, Functor, S, T, A, B>,
         }
 
         @Override
-        default <U> Iso.Simple<S, A> discardR(Applicative<U, LensLike<S, ?, A, A, Iso>> appB) {
+        default <U> Iso.Simple<S, A> discardR(Applicative<U, Iso<S, ?, A, A>> appB) {
             return adapt(Iso.super.discardR(appB));
         }
 

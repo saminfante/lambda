@@ -11,7 +11,6 @@ import com.jnape.palatable.lambda.monad.Monad;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.jnape.palatable.lambda.functions.Fn1.fn1;
 import static com.jnape.palatable.lambda.optics.Iso.iso;
 import static com.jnape.palatable.lambda.optics.Lens.Simple.adapt;
 import static com.jnape.palatable.lambda.optics.functions.Set.set;
@@ -138,18 +137,14 @@ import static com.jnape.palatable.lambda.optics.functions.View.view;
  * @param <B> the type of the "smaller" update value
  */
 @FunctionalInterface
-public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensLike<S, T, A, B, Lens> {
-
-    @Override
-    @SuppressWarnings("unchecked")
-    default <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
-            Function<? super A, ? extends FB> fn, S s) {
-        return (FT) this.<Fn1, F, Fn1<A, Functor<B, F>>, Fn1<S, Functor<T, F>>>apply(fn1(fn)).apply(s);
-    }
+public interface Lens<S, T, A, B> extends
+        Optic<Fn1, Functor, S, T, A, B>,
+        Monad<T, Lens<S, ?, A, B>>,
+        Profunctor<S, T, Lens<?, ?, A, B>> {
 
     @Override
     default <U> Lens<S, U, A, B> fmap(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>fmap(fn).coerce();
+        return Monad.super.<U>fmap(fn).coerce();
     }
 
     @Override
@@ -158,33 +153,34 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
     }
 
     @Override
-    default <U> Lens<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Lens>> appFn) {
-        return LensLike.super.zip(appFn).coerce();
+    default <U> Lens<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, Lens<S, ?, A, B>> appFn) {
+        return Monad.super.zip(appFn).coerce();
     }
 
     @Override
-    default <U> Lens<S, U, A, B> discardL(Applicative<U, LensLike<S, ?, A, B, Lens>> appB) {
-        return LensLike.super.discardL(appB).coerce();
+    default <U> Lens<S, U, A, B> discardL(Applicative<U, Lens<S, ?, A, B>> appB) {
+        return Monad.super.discardL(appB).coerce();
     }
 
     @Override
-    default <U> Lens<S, T, A, B> discardR(Applicative<U, LensLike<S, ?, A, B, Lens>> appB) {
-        return LensLike.super.discardR(appB).coerce();
+    default <U> Lens<S, T, A, B> discardR(Applicative<U, Lens<S, ?, A, B>> appB) {
+        return Monad.super.discardR(appB).coerce();
     }
 
     @Override
-    default <U> Lens<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Lens>>> f) {
+    default <U> Lens<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, Lens<S, ?, A, B>>> f) {
+
         return lens(view(this), (s, b) -> set(f.apply(set(this, b, s)).<Lens<S, U, A, B>>coerce(), b, s));
     }
 
     @Override
     default <R> Lens<R, T, A, B> diMapL(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>diMapL(fn).coerce();
+        return (Lens<R, T, A, B>) Profunctor.super.<R>diMapL(fn);
     }
 
     @Override
     default <U> Lens<S, U, A, B> diMapR(Function<? super T, ? extends U> fn) {
-        return LensLike.super.<U>diMapR(fn).coerce();
+        return (Lens<S, U, A, B>) Profunctor.super.<U>diMapR(fn);
     }
 
     @Override
@@ -195,7 +191,7 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
 
     @Override
     default <R> Lens<R, T, A, B> contraMap(Function<? super R, ? extends S> fn) {
-        return LensLike.super.<R>contraMap(fn).coerce();
+        return (Lens<R, T, A, B>) Profunctor.super.<R>contraMap(fn);
     }
 
     @Override
@@ -318,7 +314,7 @@ public interface Lens<S, T, A, B> extends Optic<Fn1, Functor, S, T, A, B>, LensL
      * @param <A> the type of both "smaller" values
      */
     @FunctionalInterface
-    interface Simple<S, A> extends Lens<S, S, A, A>, Optic.Simple<Fn1, Functor, S, A>, LensLike.Simple<S, A, Lens> {
+    interface Simple<S, A> extends Lens<S, S, A, A>, Optic.Simple<Fn1, Functor, S, A> {
 
         @Override
         default <B> Lens.Simple<S, B> andThen(Optic.Simple<? super Fn1, ? super Functor, A, B> f) {

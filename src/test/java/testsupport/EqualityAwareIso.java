@@ -3,9 +3,8 @@ package testsupport;
 import com.jnape.palatable.lambda.functor.Applicative;
 import com.jnape.palatable.lambda.functor.Functor;
 import com.jnape.palatable.lambda.functor.Profunctor;
-import com.jnape.palatable.lambda.optics.Iso;
-import com.jnape.palatable.lambda.optics.LensLike;
 import com.jnape.palatable.lambda.monad.Monad;
+import com.jnape.palatable.lambda.optics.Iso;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -31,12 +30,6 @@ public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     }
 
     @Override
-    public <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
-            Function<? super A, ? extends FB> fn, S s) {
-        return iso.apply(fn, s);
-    }
-
-    @Override
     public <U> EqualityAwareIso<S, U, A, B> fmap(Function<? super T, ? extends U> fn) {
         return new EqualityAwareIso<>(s, b, iso.fmap(fn));
     }
@@ -47,14 +40,12 @@ public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     }
 
     @Override
-    public <U> EqualityAwareIso<S, U, A, B> zip(
-            Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Iso>> appFn) {
+    public <U> EqualityAwareIso<S, U, A, B> zip(Applicative<Function<? super T, ? extends U>, Iso<S, ?, A, B>> appFn) {
         return new EqualityAwareIso<>(s, b, iso.zip(appFn));
     }
 
     @Override
-    public <U> EqualityAwareIso<S, U, A, B> flatMap(
-            Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Iso>>> fn) {
+    public <U> EqualityAwareIso<S, U, A, B> flatMap(Function<? super T, ? extends Monad<U, Iso<S, ?, A, B>>> fn) {
         return new EqualityAwareIso<>(s, b, iso.flatMap(fn));
     }
 

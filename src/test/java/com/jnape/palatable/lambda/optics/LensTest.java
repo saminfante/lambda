@@ -2,6 +2,7 @@ package com.jnape.palatable.lambda.optics;
 
 import com.jnape.palatable.lambda.adt.Maybe;
 import com.jnape.palatable.lambda.adt.hlist.Tuple2;
+import com.jnape.palatable.lambda.functions.Fn1;
 import com.jnape.palatable.lambda.functor.builtin.Const;
 import com.jnape.palatable.lambda.functor.builtin.Identity;
 import com.jnape.palatable.traitor.annotations.TestTraits;
@@ -45,13 +46,13 @@ public class LensTest {
 
     @Test
     public void setsUnderIdentity() {
-        Set<Integer> ints = LENS.<Identity, Identity<Set<Integer>>, Identity<Integer>>apply(s -> new Identity<>(s.length()), asList("foo", "bar", "baz")).runIdentity();
+        Set<Integer> ints = LENS.<Fn1, Identity, Fn1<String, Identity<Integer>>, Fn1<List<String>, Identity<Set<Integer>>>>apply(s -> new Identity<>(s.length())).apply(asList("foo", "bar", "baz")).runIdentity();
         assertEquals(singleton(3), ints);
     }
 
     @Test
     public void viewsUnderConst() {
-        Integer i = LENS.<Const<Integer, ?>, Const<Integer, Set<Integer>>, Const<Integer, Integer>>apply(s -> new Const<>(s.length()), asList("foo", "bar", "baz")).runConst();
+        Integer i = LENS.<Fn1, Const<Integer, ?>, Fn1<String, Const<Integer, Integer>>, Fn1<List<String>, Const<Integer, Set<Integer>>>>apply(s -> new Const<>(s.length())).apply(asList("foo", "bar", "baz")).runConst();
         assertEquals((Integer) 3, i);
     }
 
@@ -65,10 +66,10 @@ public class LensTest {
                 .mapB((Maybe<Integer> maybeI) -> maybeI.orElse(-1));
 
         assertEquals(just(true),
-                     theGambit.<Identity, Identity<Maybe<Boolean>>, Identity<Maybe<Integer>>>apply(
-                             maybeC -> new Identity<>(maybeC.fmap(c -> parseInt(Character.toString(c)))),
-                             just("321")).runIdentity()
-        );
+                     theGambit.<Fn1, Identity, Fn1<Maybe<Character>, Identity<Maybe<Integer>>>, Fn1<Maybe<String>, Identity<Maybe<Boolean>>>>apply(
+                             maybeC -> new Identity<>(maybeC.fmap(c -> parseInt(Character.toString(c)))))
+                             .apply(just("321"))
+                             .runIdentity());
     }
 
     @Test
