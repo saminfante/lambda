@@ -8,12 +8,12 @@ import java.util.function.Function;
  * "Strong" {@link Profunctor profunctors} are profunctors that can be "strengthened" to preserve the pairing of an
  * arbitrary type under <code>dimap</code> (<code>p a b -&gt; p (c, a) (c, b)</code> for any type <code>c</code>).
  *
- * @param <A> the type of the left parameter
- * @param <B> the type of the left parameter
- * @param <S> the unification parameter
+ * @param <A>    the type of the left parameter
+ * @param <B>    the type of the left parameter
+ * @param <Cart> the unification parameter
  * @see com.jnape.palatable.lambda.functions.Fn1
  */
-public interface Strong<A, B, S extends Strong> extends Profunctor<A, B, S> {
+public interface Cartesian<A, B, Cart extends Cartesian> extends Profunctor<A, B, Cart> {
 
     /**
      * Pair some type <code>C</code> to this profunctor's carrier types.
@@ -21,7 +21,7 @@ public interface Strong<A, B, S extends Strong> extends Profunctor<A, B, S> {
      * @param <C> the paired type
      * @return the strengthened profunctor
      */
-    <C> Strong<Tuple2<C, A>, Tuple2<C, B>, S> strengthen();
+    <C> Cartesian<Tuple2<C, A>, Tuple2<C, B>, Cart> strengthen();
 
     /**
      * Pair the covariantly-positioned carrier type with the contravariantly-positioned carrier type. This can be
@@ -29,25 +29,25 @@ public interface Strong<A, B, S extends Strong> extends Profunctor<A, B, S> {
      *
      * @return the profunctor with the first parameter carried
      */
-    default Strong<A, Tuple2<A, B>, S> carry() {
+    default Cartesian<A, Tuple2<A, B>, Cart> carry() {
         return this.<A>strengthen().contraMap(Tuple2::fill);
     }
 
     @Override
-    <Z, C> Strong<Z, C, S> diMap(Function<? super Z, ? extends A> lFn, Function<? super B, ? extends C> rFn);
+    <Z, C> Cartesian<Z, C, Cart> diMap(Function<? super Z, ? extends A> lFn, Function<? super B, ? extends C> rFn);
 
     @Override
-    default <Z> Strong<Z, B, S> diMapL(Function<? super Z, ? extends A> fn) {
-        return (Strong<Z, B, S>) Profunctor.super.<Z>diMapL(fn);
+    default <Z> Cartesian<Z, B, Cart> diMapL(Function<? super Z, ? extends A> fn) {
+        return (Cartesian<Z, B, Cart>) Profunctor.super.<Z>diMapL(fn);
     }
 
     @Override
-    default <C> Strong<A, C, S> diMapR(Function<? super B, ? extends C> fn) {
-        return (Strong<A, C, S>) Profunctor.super.<C>diMapR(fn);
+    default <C> Cartesian<A, C, Cart> diMapR(Function<? super B, ? extends C> fn) {
+        return (Cartesian<A, C, Cart>) Profunctor.super.<C>diMapR(fn);
     }
 
     @Override
-    default <Z> Strong<Z, B, S> contraMap(Function<? super Z, ? extends A> fn) {
-        return (Strong<Z, B, S>) Profunctor.super.<Z>contraMap(fn);
+    default <Z> Cartesian<Z, B, Cart> contraMap(Function<? super Z, ? extends A> fn) {
+        return (Cartesian<Z, B, Cart>) Profunctor.super.<Z>contraMap(fn);
     }
 }
