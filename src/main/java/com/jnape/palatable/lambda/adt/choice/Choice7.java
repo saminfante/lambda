@@ -125,7 +125,7 @@ public abstract class Choice7<A, B, C, D, E, F, G> implements
                      d -> pure.apply((TravB) Choice7.<A, B, C, D, E, F, H>d(d)),
                      e -> pure.apply((TravB) Choice7.<A, B, C, D, E, F, H>e(e)),
                      f -> pure.apply((TravB) Choice7.<A, B, C, D, E, F, H>f(f)),
-                     g -> fn.apply(g).fmap(Choice7::g).<TravB>fmap(Applicative::coerce).coerce());
+                     g -> fn.apply(g).<Choice7<A, B, C, D, E, F, H>>fmap(Choice7::g).<TravB>fmap(Applicative::coerce).coerce());
     }
 
     /**

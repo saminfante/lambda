@@ -113,7 +113,7 @@ public abstract class Choice4<A, B, C, D> implements
         return match(a -> pure.apply((TravB) Choice4.<A, B, C, E>a(a)).coerce(),
                      b -> pure.apply((TravB) Choice4.<A, B, C, E>b(b)).coerce(),
                      c -> pure.apply((TravB) Choice4.<A, B, C, E>c(c)),
-                     d -> fn.apply(d).fmap(Choice4::d).<TravB>fmap(Applicative::coerce).coerce());
+                     d -> fn.apply(d).<Choice4<A, B, C, E>>fmap(Choice4::d).<TravB>fmap(Applicative::coerce).coerce());
     }
 
     /**

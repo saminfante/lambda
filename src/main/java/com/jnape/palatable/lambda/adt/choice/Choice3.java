@@ -108,7 +108,7 @@ public abstract class Choice3<A, B, C> implements
             Function<? super C, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(a -> pure.apply((TravB) Choice3.<A, B, D>a(a)).coerce(),
                      b -> pure.apply((TravB) Choice3.<A, B, D>b(b)).coerce(),
-                     c -> fn.apply(c).fmap(Choice3::c).<TravB>fmap(Applicative::coerce).coerce());
+                     c -> fn.apply(c).<Choice3<A, B, D>>fmap(Choice3::c).<TravB>fmap(Applicative::coerce).coerce());
     }
 
     /**

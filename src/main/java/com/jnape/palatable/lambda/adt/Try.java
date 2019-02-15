@@ -174,7 +174,7 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
     public <B, App extends Applicative, TravB extends Traversable<B, Try<T, ?>>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super A, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(t -> pure.apply((TravB) failure(t)),
-                     a -> fn.apply(a).fmap(Try::success).<TravB>fmap(Applicative::coerce).coerce());
+                     a -> fn.apply(a).<Try<T, B>>fmap(Try::success).<TravB>fmap(Applicative::coerce).coerce());
     }
 
     @Override

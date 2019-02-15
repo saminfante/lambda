@@ -107,7 +107,7 @@ public abstract class Choice2<A, B> implements
     public <C, App extends Applicative, TravB extends Traversable<C, Choice2<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
             Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
         return match(a -> pure.apply((TravB) a(a)),
-                     b -> fn.apply(b).fmap(Choice2::b).<TravB>fmap(Applicative::coerce).coerce());
+                     b -> fn.apply(b).<Choice2<A, C>>fmap(Choice2::b).<TravB>fmap(Applicative::coerce).coerce());
     }
 
     /**
