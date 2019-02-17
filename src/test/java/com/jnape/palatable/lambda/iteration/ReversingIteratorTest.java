@@ -22,7 +22,7 @@ public class ReversingIteratorTest {
 
     @Mock private Iterator<Object> iterator;
 
-    private ReversingIterator reversingIterator;
+    private ReversingIterator<?> reversingIterator;
 
     @Before
     public void setUp() {

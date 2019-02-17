@@ -21,8 +21,10 @@ import static testsupport.matchers.IterableMatcher.iterates;
 @RunWith(Traits.class)
 public class InitsTest {
 
-    @TestTraits({Laziness.class, EmptyIterableSupport.class, InfiniteIterableSupport.class, FiniteIteration.class, ImmutableIteration.class})
-    public Fn1<? extends Iterable, ? extends Iterable> testSubject() {
+    @TestTraits({
+            Laziness.class, EmptyIterableSupport.class, InfiniteIterableSupport.class, FiniteIteration.class,
+            ImmutableIteration.class})
+    public Fn1<Iterable<Object>, Iterable<Iterable<Object>>> testSubject() {
         return inits();
     }
 

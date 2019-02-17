@@ -160,7 +160,7 @@ public class HMapTest {
         TypeSafeKey<String, String> stringKey = typeSafeKey();
         TypeSafeKey<Integer, Integer> intKey = typeSafeKey();
 
-        assertEquals(new HashMap<TypeSafeKey, Object>() {{
+        assertEquals(new HashMap<TypeSafeKey<?, ?>, Object>() {{
             put(stringKey, "string");
             put(intKey, 1);
         }}, hMap(stringKey, "string",

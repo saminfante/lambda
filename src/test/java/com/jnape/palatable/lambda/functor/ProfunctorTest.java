@@ -14,16 +14,18 @@ public class ProfunctorTest {
 
     @Test
     public void diMapLUsesIdentityForRightDiMapFunction() {
-        AtomicReference<Function> rightInvocation = new AtomicReference<>();
-        Profunctor<String, Integer, InvocationRecordingProfunctor> profunctor = new InvocationRecordingProfunctor<>(new AtomicReference<>(), rightInvocation);
+        AtomicReference<Function<?, ?>> rightInvocation = new AtomicReference<>();
+        InvocationRecordingProfunctor<String, Integer> profunctor =
+                new InvocationRecordingProfunctor<>(new AtomicReference<>(), rightInvocation);
         profunctor.diMapL(Object::toString);
         assertThat(rightInvocation.get(), is(id()));
     }
 
     @Test
     public void diMapRUsesIdentityForLeftDiMapFunction() {
-        AtomicReference<Function> leftInvocation = new AtomicReference<>();
-        Profunctor<String, Integer, InvocationRecordingProfunctor> profunctor = new InvocationRecordingProfunctor<>(leftInvocation, new AtomicReference<>());
+        AtomicReference<Function<?, ?>> leftInvocation = new AtomicReference<>();
+        InvocationRecordingProfunctor<String, Integer> profunctor =
+                new InvocationRecordingProfunctor<>(leftInvocation, new AtomicReference<>());
         profunctor.diMapR(String::valueOf);
         assertThat(leftInvocation.get(), is(id()));
     }

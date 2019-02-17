@@ -23,20 +23,21 @@ import static com.jnape.palatable.lambda.adt.hlist.HList.tuple;
  */
 public final class Collapse<_1, _2> implements BiMonoidFactory<Monoid<_1>, Monoid<_2>, Tuple2<_1, _2>> {
 
-    private static final Collapse INSTANCE = new Collapse();
+    private static final Collapse<?, ?> INSTANCE = new Collapse<>();
 
     private Collapse() {
     }
 
     @Override
     public Monoid<Tuple2<_1, _2>> apply(Monoid<_1> _1Monoid, Monoid<_2> _2Monoid) {
-        Semigroup<Tuple2<_1, _2>> semigroup = com.jnape.palatable.lambda.semigroup.builtin.Collapse.collapse(_1Monoid, _2Monoid);
+        Semigroup<Tuple2<_1, _2>> semigroup = com.jnape.palatable.lambda.semigroup.builtin.Collapse.collapse(
+                _1Monoid, _2Monoid);
         return Monoid.<Tuple2<_1, _2>>monoid(semigroup, () -> tuple(_1Monoid.identity(), _2Monoid.identity()));
     }
 
     @SuppressWarnings("unchecked")
     public static <_1, _2> Collapse<_1, _2> collapse() {
-        return INSTANCE;
+        return (Collapse<_1, _2>) INSTANCE;
     }
 
     public static <_1, _2> MonoidFactory<Monoid<_2>, Tuple2<_1, _2>> collapse(Monoid<_1> _1Monoid) {

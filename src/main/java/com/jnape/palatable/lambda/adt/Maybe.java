@@ -30,7 +30,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @param <A> the optional parameter type
  * @see Optional
  */
-public abstract class Maybe<A> implements CoProduct2<Unit, A, Maybe<A>>, Monad<A, Maybe>, Traversable<A, Maybe> {
+public abstract class Maybe<A> implements CoProduct2<Unit, A, Maybe<A>>, Monad<A, Maybe<?>>, Traversable<A, Maybe<?>> {
 
     private Maybe() {
     }
@@ -126,22 +126,22 @@ public abstract class Maybe<A> implements CoProduct2<Unit, A, Maybe<A>>, Monad<A
     }
 
     @Override
-    public final <B> Maybe<B> zip(Applicative<Function<? super A, ? extends B>, Maybe> appFn) {
+    public final <B> Maybe<B> zip(Applicative<Function<? super A, ? extends B>, Maybe<?>> appFn) {
         return Monad.super.zip(appFn).coerce();
     }
 
     @Override
-    public final <B> Maybe<B> discardL(Applicative<B, Maybe> appB) {
+    public final <B> Maybe<B> discardL(Applicative<B, Maybe<?>> appB) {
         return Monad.super.discardL(appB).coerce();
     }
 
     @Override
-    public final <B> Maybe<A> discardR(Applicative<B, Maybe> appB) {
+    public final <B> Maybe<A> discardR(Applicative<B, Maybe<?>> appB) {
         return Monad.super.discardR(appB).coerce();
     }
 
     @Override
-    public final <B> Maybe<B> flatMap(Function<? super A, ? extends Monad<B, Maybe>> f) {
+    public final <B> Maybe<B> flatMap(Function<? super A, ? extends Monad<B, Maybe<?>>> f) {
         return match(constantly(nothing()), f.andThen(Applicative::coerce));
     }
 
@@ -172,9 +172,10 @@ public abstract class Maybe<A> implements CoProduct2<Unit, A, Maybe<A>>, Monad<A
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <B, App extends Applicative, TravB extends Traversable<B, Maybe>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
-            Function<? super A, ? extends AppB> fn,
-            Function<? super TravB, ? extends AppTrav> pure) {
+    public final <B, App extends Applicative<?, App>, TravB extends Traversable<B, Maybe<?>>,
+            AppB extends Applicative<B, App>,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Function<? super A, ? extends AppB> fn,
+                                                                      Function<? super TravB, ? extends AppTrav> pure) {
         return match(__ -> pure.apply((TravB) Maybe.<B>nothing()), a -> (AppTrav) fn.apply(a).fmap(Maybe::just));
     }
 
@@ -236,11 +237,11 @@ public abstract class Maybe<A> implements CoProduct2<Unit, A, Maybe<A>>, Monad<A
      */
     @SuppressWarnings("unchecked")
     public static <A> Maybe<A> nothing() {
-        return Nothing.INSTANCE;
+        return (Maybe<A>) Nothing.INSTANCE;
     }
 
     private static final class Nothing<A> extends Maybe<A> {
-        private static final Nothing INSTANCE = new Nothing();
+        private static final Nothing<?> INSTANCE = new Nothing<>();
 
         private Nothing() {
         }

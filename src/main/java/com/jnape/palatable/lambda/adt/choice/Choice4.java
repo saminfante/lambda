@@ -108,10 +108,12 @@ public abstract class Choice4<A, B, C, D> implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E, App extends Applicative, TravB extends Traversable<E, Choice4<A, B, C, ?>>, AppB extends Applicative<E, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
-            Function<? super D, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return match(a -> pure.apply((TravB) Choice4.<A, B, C, E>a(a)).coerce(),
-                     b -> pure.apply((TravB) Choice4.<A, B, C, E>b(b)).coerce(),
+    public <E, App extends Applicative<?, App>, TravB extends Traversable<E, Choice4<A, B, C, ?>>,
+            AppB extends Applicative<E, App>,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Function<? super D, ? extends AppB> fn,
+                                                                      Function<? super TravB, ? extends AppTrav> pure) {
+        return match(a -> pure.apply((TravB) Choice4.<A, B, C, E>a(a)),
+                     b -> pure.apply((TravB) Choice4.<A, B, C, E>b(b)),
                      c -> pure.apply((TravB) Choice4.<A, B, C, E>c(c)),
                      d -> fn.apply(d).<Choice4<A, B, C, E>>fmap(Choice4::d).<TravB>fmap(Applicative::coerce).coerce());
     }

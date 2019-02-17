@@ -18,7 +18,11 @@ import java.util.function.Function;
  * @param <B> the recursive function's output type
  * @see Trampoline
  */
-public abstract class RecursiveResult<A, B> implements CoProduct2<A, B, RecursiveResult<A, B>>, Bifunctor<A, B, RecursiveResult<?, ?>>, Monad<B, RecursiveResult<A, ?>>, Traversable<B, RecursiveResult<A, ?>> {
+public abstract class RecursiveResult<A, B> implements
+        CoProduct2<A, B, RecursiveResult<A, B>>,
+        Bifunctor<A, B, RecursiveResult<?, ?>>,
+        Monad<B, RecursiveResult<A, ?>>,
+        Traversable<B, RecursiveResult<A, ?>> {
 
     private RecursiveResult() {
     }
@@ -80,9 +84,12 @@ public abstract class RecursiveResult<A, B> implements CoProduct2<A, B, Recursiv
 
     @Override
     @SuppressWarnings("unchecked")
-    public <C, App extends Applicative, TravB extends Traversable<C, RecursiveResult<A, ?>>, AppB extends Applicative<C, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
-            Function<? super B, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return match(__ -> pure.apply(coerce()), b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::coerce).coerce());
+    public <C, App extends Applicative<?, App>, TravB extends Traversable<C, RecursiveResult<A, ?>>,
+            AppB extends Applicative<C, App>,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Function<? super B, ? extends AppB> fn,
+                                                                      Function<? super TravB, ? extends AppTrav> pure) {
+        return match(__ -> pure.apply(coerce()),
+                     b -> fn.apply(b).fmap(this::pure).<TravB>fmap(Applicative::coerce).coerce());
     }
 
     public static <A, B> RecursiveResult<A, B> recurse(A a) {

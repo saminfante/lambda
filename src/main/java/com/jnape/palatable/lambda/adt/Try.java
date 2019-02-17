@@ -27,7 +27,11 @@ import static com.jnape.palatable.lambda.functions.builtin.fn2.Peek2.peek2;
  * @param <A> the possibly successful expression result
  * @see Either
  */
-public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>, Traversable<A, Try<T, ?>>, BoundedBifunctor<T, A, Throwable, Object, Try<?, ?>>, CoProduct2<T, A, Try<T, A>> {
+public abstract class Try<T extends Throwable, A> implements
+        Monad<A, Try<T, ?>>,
+        Traversable<A, Try<T, ?>>,
+        BoundedBifunctor<T, A, Throwable, Object, Try<?, ?>>,
+        CoProduct2<T, A, Try<T, A>> {
 
     private Try() {
     }
@@ -171,8 +175,10 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
 
     @Override
     @SuppressWarnings("unchecked")
-    public <B, App extends Applicative, TravB extends Traversable<B, Try<T, ?>>, AppB extends Applicative<B, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
-            Function<? super A, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
+    public <B, App extends Applicative<?, App>, TravB extends Traversable<B, Try<T, ?>>,
+            AppB extends Applicative<B, App>,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Function<? super A, ? extends AppB> fn,
+                                                                      Function<? super TravB, ? extends AppTrav> pure) {
         return match(t -> pure.apply((TravB) failure(t)),
                      a -> fn.apply(a).<Try<T, B>>fmap(Try::success).<TravB>fmap(Applicative::coerce).coerce());
     }
@@ -275,6 +281,7 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
      * @param <B>       the function return type
      * @return a {@link Try} representing the result of the function's application to the resource
      */
+    @SuppressWarnings("try")
     public static <A extends AutoCloseable, B> Try<Exception, B> withResources(
             CheckedSupplier<? extends Exception, A> aSupplier,
             CheckedFn1<? extends Exception, ? super A, ? extends Try<? extends Exception, ? extends B>> fn) {
@@ -319,7 +326,8 @@ public abstract class Try<T extends Throwable, A> implements Monad<A, Try<T, ?>>
      * @param <D>       the function return type
      * @return a {@link Try} representing the result of the function's application to the final dependent resource
      */
-    public static <A extends AutoCloseable, B extends AutoCloseable, C extends AutoCloseable, D> Try<Exception, D> withResources(
+    public static <A extends AutoCloseable,
+            B extends AutoCloseable, C extends AutoCloseable, D> Try<Exception, D> withResources(
             CheckedSupplier<? extends Exception, ? extends A> aSupplier,
             CheckedFn1<? extends Exception, ? super A, ? extends B> bFn,
             CheckedFn1<? extends Exception, ? super B, ? extends C> cFn,

@@ -26,7 +26,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @param <A> the type of the parameter
  * @param <M> the unification parameter to more tightly type-constrain Monads to themselves
  */
-public interface Monad<A, M extends Monad> extends Applicative<A, M> {
+public interface Monad<A, M extends Monad<?, M>> extends Applicative<A, M> {
 
     /**
      * Chain dependent computations that may continue or short-circuit based on previous results.
@@ -84,7 +84,7 @@ public interface Monad<A, M extends Monad> extends Applicative<A, M> {
      * @param <MA> the nested monad
      * @return the nested monad
      */
-    static <M extends Monad, A, MA extends Monad<A, M>> MA join(Monad<? extends MA, M> mma) {
+    static <M extends Monad<?, M>, A, MA extends Monad<A, M>> MA join(Monad<? extends MA, M> mma) {
         return mma.flatMap(id()).coerce();
     }
 }

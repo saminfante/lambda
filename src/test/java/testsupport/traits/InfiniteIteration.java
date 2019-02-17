@@ -9,11 +9,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static testsupport.matchers.FiniteIterableMatcher.finitelyIterable;
 
-public class InfiniteIteration implements Trait<Fn1<Iterable, Iterable>> {
+public class InfiniteIteration implements Trait<Fn1<Iterable<?>, Iterable<?>>> {
 
     @Override
-    public void test(Fn1<Iterable, Iterable> testSubject) {
-        Iterable result = testSubject.apply(asList(1, 2, 3));
-        assertThat(result, is(not(finitelyIterable())));
+    public void test(Fn1<Iterable<?>, Iterable<?>> testSubject) {
+        assertThat(testSubject.apply(asList(1, 2, 3)), is(not(finitelyIterable())));
     }
 }

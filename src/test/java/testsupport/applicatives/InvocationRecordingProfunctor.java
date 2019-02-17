@@ -5,12 +5,14 @@ import com.jnape.palatable.lambda.functor.Profunctor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-public final class InvocationRecordingProfunctor<A, B> implements Profunctor<A, B, InvocationRecordingProfunctor> {
-    private final AtomicReference<Function> leftFn;
-    private final AtomicReference<Function> rightFn;
+public final class InvocationRecordingProfunctor<A, B> implements
+        Profunctor<A, B, InvocationRecordingProfunctor<?, ?>> {
 
-    public InvocationRecordingProfunctor(AtomicReference<Function> leftFn,
-                                         AtomicReference<Function> rightFn) {
+    private final AtomicReference<Function<?, ?>> leftFn;
+    private final AtomicReference<Function<?, ?>> rightFn;
+
+    public InvocationRecordingProfunctor(AtomicReference<Function<?, ?>> leftFn,
+                                         AtomicReference<Function<?, ?>> rightFn) {
         this.leftFn = leftFn;
         this.rightFn = rightFn;
     }

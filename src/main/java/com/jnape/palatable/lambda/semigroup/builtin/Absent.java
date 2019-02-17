@@ -25,19 +25,19 @@ import com.jnape.palatable.lambda.semigroup.Semigroup;
  */
 public final class Absent<A> implements SemigroupFactory<Semigroup<A>, Maybe<A>> {
 
-    private static final Absent INSTANCE = new Absent<>();
+    private static final Absent<?> INSTANCE = new Absent<>();
 
     private Absent() {
     }
 
     @Override
     public Semigroup<Maybe<A>> apply(Semigroup<A> aSemigroup) {
-        return LiftA2.<A, A, A, Maybe, Maybe<A>, Maybe<A>, Maybe<A>>liftA2(aSemigroup.toBiFunction())::apply;
+        return LiftA2.<A, A, A, Maybe<?>, Maybe<A>, Maybe<A>, Maybe<A>>liftA2(aSemigroup.toBiFunction())::apply;
     }
 
     @SuppressWarnings("unchecked")
     public static <A> Absent<A> absent() {
-        return INSTANCE;
+        return (Absent<A>) INSTANCE;
     }
 
     public static <A> Semigroup<Maybe<A>> absent(Semigroup<A> semigroup) {

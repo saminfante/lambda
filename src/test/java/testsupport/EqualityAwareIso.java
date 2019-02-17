@@ -13,6 +13,7 @@ import java.util.function.Function;
 import static com.jnape.palatable.lambda.functions.builtin.fn2.Both.both;
 import static com.jnape.palatable.lambda.lens.functions.View.view;
 
+@SuppressWarnings("overrides")
 public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     private final S               s;
     private final B               b;
@@ -25,13 +26,13 @@ public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
     }
 
     @Override
-    public <P extends Profunctor, F extends Functor, FB extends Functor<B, F>, FT extends Functor<T, F>, PAFB extends Profunctor<A, FB, P>, PSFT extends Profunctor<S, FT, P>> PSFT apply(
-            PAFB pafb) {
+    public <P extends Profunctor<?, ?, P>, F extends Functor<?, F>, FB extends Functor<B, F>, FT extends Functor<T, F>,
+            PAFB extends Profunctor<A, FB, P>, PSFT extends Profunctor<S, FT, P>> PSFT apply(PAFB pafb) {
         return iso.<P, F, FB, FT, PAFB, PSFT>apply(pafb);
     }
 
     @Override
-    public <F extends Functor, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
+    public <F extends Functor<?, F>, FT extends Functor<T, F>, FB extends Functor<B, F>> FT apply(
             Function<? super A, ? extends FB> fn, S s) {
         return iso.apply(fn, s);
     }
@@ -48,13 +49,13 @@ public final class EqualityAwareIso<S, T, A, B> implements Iso<S, T, A, B> {
 
     @Override
     public <U> EqualityAwareIso<S, U, A, B> zip(
-            Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Iso>> appFn) {
+            Applicative<Function<? super T, ? extends U>, LensLike<S, ?, A, B, Iso<?, ?, ?, ?>>> appFn) {
         return new EqualityAwareIso<>(s, b, iso.zip(appFn));
     }
 
     @Override
     public <U> EqualityAwareIso<S, U, A, B> flatMap(
-            Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Iso>>> fn) {
+            Function<? super T, ? extends Monad<U, LensLike<S, ?, A, B, Iso<?, ?, ?, ?>>>> fn) {
         return new EqualityAwareIso<>(s, b, iso.flatMap(fn));
     }
 

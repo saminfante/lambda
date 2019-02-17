@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
  * @param <L> The left parameter type
  * @param <R> The right parameter type
  */
-public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Monad<R, Either<L, ?>>, Traversable<R, Either<L, ?>>, Bifunctor<L, R, Either> {
+public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Monad<R, Either<L, ?>>, Traversable<R, Either<L, ?>>, Bifunctor<L, R, Either<?, ?>> {
 
     private Either() {
     }
@@ -162,6 +162,7 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
      * @return the merged Either
      */
     @SafeVarargs
+    @SuppressWarnings("varargs")
     public final Either<L, R> merge(BiFunction<? super L, ? super L, ? extends L> leftFn,
                                     BiFunction<? super R, ? super R, ? extends R> rightFn,
                                     Either<L, R>... others) {
@@ -255,9 +256,10 @@ public abstract class Either<L, R> implements CoProduct2<L, R, Either<L, R>>, Mo
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <R2, App extends Applicative, TravB extends Traversable<R2, Either<L, ?>>, AppB extends Applicative<R2, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
-            Function<? super R, ? extends AppB> fn,
-            Function<? super TravB, ? extends AppTrav> pure) {
+    public final <R2, App extends Applicative<?, App>, TravB extends Traversable<R2, Either<L, ?>>,
+            AppB extends Applicative<R2, App>,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Function<? super R, ? extends AppB> fn,
+                                                                      Function<? super TravB, ? extends AppTrav> pure) {
         return (AppTrav) match(l -> pure.apply((TravB) left(l)), r -> fn.apply(r).fmap(Either::right));
     }
 

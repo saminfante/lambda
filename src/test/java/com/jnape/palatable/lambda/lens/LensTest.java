@@ -35,8 +35,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Traits.class)
 public class LensTest {
 
-    private static final Lens<Map<String, List<String>>, Map<String, Set<Integer>>, List<String>, Set<Integer>> EARLIER_LENS = lens(m -> m.get("foo"), (m, s) -> singletonMap("foo", s));
-    private static final Lens<List<String>, Set<Integer>, String, Integer>                                      LENS         = lens(xs -> xs.get(0), (xs, i) -> singleton(i));
+    private static final Lens<Map<String, List<String>>, Map<String, Set<Integer>>, List<String>, Set<Integer>>
+            EARLIER_LENS = lens(m -> m.get("foo"), (m, s) -> singletonMap("foo", s));
+    private static final Lens<List<String>, Set<Integer>, String, Integer>
+            LENS         = lens(xs -> xs.get(0), (xs, i) -> singleton(i));
 
     @TestTraits({FunctorLaws.class, ApplicativeLaws.class, MonadLaws.class})
     public Lens<Map<String, Integer>, List<Integer>, Integer, String> testSubject() {
@@ -45,13 +47,15 @@ public class LensTest {
 
     @Test
     public void setsUnderIdentity() {
-        Set<Integer> ints = LENS.<Identity, Identity<Set<Integer>>, Identity<Integer>>apply(s -> new Identity<>(s.length()), asList("foo", "bar", "baz")).runIdentity();
+        Set<Integer> ints = LENS.<Identity<?>, Identity<Set<Integer>>, Identity<Integer>>apply(
+                s -> new Identity<>(s.length()), asList("foo", "bar", "baz")).runIdentity();
         assertEquals(singleton(3), ints);
     }
 
     @Test
     public void viewsUnderConst() {
-        Integer i = LENS.<Const<Integer, ?>, Const<Integer, Set<Integer>>, Const<Integer, Integer>>apply(s -> new Const<>(s.length()), asList("foo", "bar", "baz")).runConst();
+        Integer i = LENS.<Const<Integer, ?>, Const<Integer, Set<Integer>>, Const<Integer, Integer>>apply(
+                s -> new Const<>(s.length()), asList("foo", "bar", "baz")).runConst();
         assertEquals((Integer) 3, i);
     }
 
@@ -65,7 +69,7 @@ public class LensTest {
                 .mapB((Maybe<Integer> maybeI) -> maybeI.orElse(-1));
 
         assertEquals(just(true),
-                     theGambit.<Identity, Identity<Maybe<Boolean>>, Identity<Maybe<Integer>>>apply(
+                     theGambit.<Identity<?>, Identity<Maybe<Boolean>>, Identity<Maybe<Integer>>>apply(
                              maybeC -> new Identity<>(maybeC.fmap(c -> parseInt(Character.toString(c)))),
                              just("321")).runIdentity()
         );

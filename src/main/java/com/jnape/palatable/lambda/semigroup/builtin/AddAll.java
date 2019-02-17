@@ -18,7 +18,7 @@ import java.util.Collection;
 @Deprecated
 public final class AddAll<A, C extends Collection<A>> implements Semigroup<C> {
 
-    private static final AddAll INSTANCE = new AddAll();
+    private static final AddAll<?, ?> INSTANCE = new AddAll<>();
 
     private AddAll() {
     }
@@ -31,7 +31,7 @@ public final class AddAll<A, C extends Collection<A>> implements Semigroup<C> {
 
     @SuppressWarnings("unchecked")
     public static <A, C extends Collection<A>> AddAll<A, C> addAll() {
-        return INSTANCE;
+        return (AddAll<A, C>) INSTANCE;
     }
 
     public static <A, C extends Collection<A>> Fn1<C, C> addAll(C xs) {

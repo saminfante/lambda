@@ -110,10 +110,12 @@ public abstract class Choice5<A, B, C, D, E> implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public <F, App extends Applicative, TravB extends Traversable<F, Choice5<A, B, C, D, ?>>, AppB extends Applicative<F, App>, AppTrav extends Applicative<TravB, App>> AppTrav traverse(
-            Function<? super E, ? extends AppB> fn, Function<? super TravB, ? extends AppTrav> pure) {
-        return match(a -> pure.apply((TravB) Choice5.<A, B, C, D, F>a(a)).coerce(),
-                     b -> pure.apply((TravB) Choice5.<A, B, C, D, F>b(b)).coerce(),
+    public <F, App extends Applicative<?, App>, TravB extends Traversable<F, Choice5<A, B, C, D, ?>>,
+            AppB extends Applicative<F, App>,
+            AppTrav extends Applicative<TravB, App>> AppTrav traverse(Function<? super E, ? extends AppB> fn,
+                                                                      Function<? super TravB, ? extends AppTrav> pure) {
+        return match(a -> pure.apply((TravB) Choice5.<A, B, C, D, F>a(a)),
+                     b -> pure.apply((TravB) Choice5.<A, B, C, D, F>b(b)),
                      c -> pure.apply((TravB) Choice5.<A, B, C, D, F>c(c)),
                      d -> pure.apply((TravB) Choice5.<A, B, C, D, F>d(d)),
                      e -> fn.apply(e).<Choice5<A, B, C, D, F>>fmap(Choice5::e).<TravB>fmap(Applicative::coerce).coerce());

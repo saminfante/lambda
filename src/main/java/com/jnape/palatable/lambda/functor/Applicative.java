@@ -26,7 +26,7 @@ import static com.jnape.palatable.lambda.functions.builtin.fn1.Id.id;
  * @param <A>   The type of the parameter
  * @param <App> The unification parameter to more tightly type-constrain Applicatives to themselves
  */
-public interface Applicative<A, App extends Applicative> extends Functor<A, App> {
+public interface Applicative<A, App extends Applicative<?, App>> extends Functor<A, App> {
 
     /**
      * Lift the value <code>b</code> into this applicative functor.

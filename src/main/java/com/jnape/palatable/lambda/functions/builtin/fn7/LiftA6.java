@@ -31,16 +31,17 @@ import com.jnape.palatable.lambda.functor.Applicative;
  * @see Applicative#zip(Applicative)
  */
 public final class LiftA6<A, B, C, D, E, F, G,
-        App extends Applicative,
+        App extends Applicative<?, App>,
         AppA extends Applicative<A, App>,
         AppB extends Applicative<B, App>,
         AppC extends Applicative<C, App>,
         AppD extends Applicative<D, App>,
         AppE extends Applicative<E, App>,
         AppF extends Applicative<F, App>,
-        AppG extends Applicative<G, App>> implements Fn7<Fn6<A, B, C, D, E, F, G>, AppA, AppB, AppC, AppD, AppE, AppF, AppG> {
+        AppG extends Applicative<G, App>> implements
+        Fn7<Fn6<A, B, C, D, E, F, G>, AppA, AppB, AppC, AppD, AppE, AppF, AppG> {
 
-    private static final LiftA6 INSTANCE = new LiftA6();
+    private static final LiftA6<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> INSTANCE = new LiftA6<>();
 
     private LiftA6() {
     }
@@ -54,19 +55,20 @@ public final class LiftA6<A, B, C, D, E, F, G,
 
     @SuppressWarnings("unchecked")
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
             AppD extends Applicative<D, App>,
             AppE extends Applicative<E, App>,
             AppF extends Applicative<F, App>,
-            AppG extends Applicative<G, App>> LiftA6<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG> liftA6() {
-        return INSTANCE;
+            AppG extends Applicative<G, App>>
+    LiftA6<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG> liftA6() {
+        return (LiftA6<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>) INSTANCE;
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -79,7 +81,7 @@ public final class LiftA6<A, B, C, D, E, F, G,
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -93,7 +95,7 @@ public final class LiftA6<A, B, C, D, E, F, G,
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -101,13 +103,12 @@ public final class LiftA6<A, B, C, D, E, F, G,
             AppE extends Applicative<E, App>,
             AppF extends Applicative<F, App>,
             AppG extends Applicative<G, App>> Fn4<AppC, AppD, AppE, AppF, AppG> liftA6(Fn6<A, B, C, D, E, F, G> fn,
-                                                                                       AppA appA,
-                                                                                       AppB appB) {
+                                                                                       AppA appA, AppB appB) {
         return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>liftA6(fn, appA).apply(appB);
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -115,13 +116,13 @@ public final class LiftA6<A, B, C, D, E, F, G,
             AppE extends Applicative<E, App>,
             AppF extends Applicative<F, App>,
             AppG extends Applicative<G, App>> Fn3<AppD, AppE, AppF, AppG> liftA6(Fn6<A, B, C, D, E, F, G> fn, AppA appA,
-                                                                                 AppB appB,
-                                                                                 AppC appC) {
-        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>liftA6(fn, appA, appB).apply(appC);
+                                                                                 AppB appB, AppC appC) {
+        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>
+                liftA6(fn, appA, appB).apply(appC);
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -129,13 +130,13 @@ public final class LiftA6<A, B, C, D, E, F, G,
             AppE extends Applicative<E, App>,
             AppF extends Applicative<F, App>,
             AppG extends Applicative<G, App>> Fn2<AppE, AppF, AppG> liftA6(Fn6<A, B, C, D, E, F, G> fn, AppA appA,
-                                                                           AppB appB,
-                                                                           AppC appC, AppD appD) {
-        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>liftA6(fn, appA, appB, appC).apply(appD);
+                                                                           AppB appB, AppC appC, AppD appD) {
+        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>
+                liftA6(fn, appA, appB, appC).apply(appD);
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -144,11 +145,12 @@ public final class LiftA6<A, B, C, D, E, F, G,
             AppF extends Applicative<F, App>,
             AppG extends Applicative<G, App>> Fn1<AppF, AppG> liftA6(Fn6<A, B, C, D, E, F, G> fn, AppA appA, AppB appB,
                                                                      AppC appC, AppD appD, AppE appE) {
-        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>liftA6(fn, appA, appB, appC, appD).apply(appE);
+        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>
+                liftA6(fn, appA, appB, appC, appD).apply(appE);
     }
 
     public static <A, B, C, D, E, F, G,
-            App extends Applicative,
+            App extends Applicative<?, App>,
             AppA extends Applicative<A, App>,
             AppB extends Applicative<B, App>,
             AppC extends Applicative<C, App>,
@@ -157,6 +159,7 @@ public final class LiftA6<A, B, C, D, E, F, G,
             AppF extends Applicative<F, App>,
             AppG extends Applicative<G, App>> AppG liftA6(Fn6<A, B, C, D, E, F, G> fn, AppA appA, AppB appB,
                                                           AppC appC, AppD appD, AppE appE, AppF appF) {
-        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>liftA6(fn, appA, appB, appC, appD, appE).apply(appF);
+        return LiftA6.<A, B, C, D, E, F, G, App, AppA, AppB, AppC, AppD, AppE, AppF, AppG>
+                liftA6(fn, appA, appB, appC, appD, appE).apply(appF);
     }
 }

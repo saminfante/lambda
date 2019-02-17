@@ -14,16 +14,18 @@ public class BifunctorTest {
 
     @Test
     public void biMapLUsesIdentityForRightBiMapFunction() {
-        AtomicReference<Function> rightInvocation = new AtomicReference<>();
-        Bifunctor<String, Integer, InvocationRecordingBifunctor> bifunctor = new InvocationRecordingBifunctor<>(new AtomicReference<>(), rightInvocation);
+        AtomicReference<Function<?, ?>> rightInvocation = new AtomicReference<>();
+        InvocationRecordingBifunctor<String, Integer> bifunctor =
+                new InvocationRecordingBifunctor<>(new AtomicReference<>(), rightInvocation);
         bifunctor.biMapL(String::toUpperCase);
         assertThat(rightInvocation.get(), is(id()));
     }
 
     @Test
     public void biMapRUsesIdentityForLeftBiMapFunction() {
-        AtomicReference<Function> leftInvocation = new AtomicReference<>();
-        Bifunctor<String, Integer, InvocationRecordingBifunctor> bifunctor = new InvocationRecordingBifunctor<>(leftInvocation, new AtomicReference<>());
+        AtomicReference<Function<?, ?>> leftInvocation = new AtomicReference<>();
+        InvocationRecordingBifunctor<String, Integer> bifunctor =
+                new InvocationRecordingBifunctor<>(leftInvocation, new AtomicReference<>());
         bifunctor.biMapR(String::valueOf);
         assertThat(leftInvocation.get(), is(id()));
     }

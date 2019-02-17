@@ -15,7 +15,7 @@ import java.util.function.Function;
  * @param <MB> the output {@link Monad} type
  */
 @FunctionalInterface
-public interface Kleisli<A, B, M extends Monad, MB extends Monad<B, M>> extends Fn1<A, MB> {
+public interface Kleisli<A, B, M extends Monad<?, M>, MB extends Monad<B, M>> extends Fn1<A, MB> {
 
     /**
      * Left-to-right composition of two compatible {@link Kleisli} arrows, yielding a new {@link Kleisli} arrow.
@@ -25,6 +25,7 @@ public interface Kleisli<A, B, M extends Monad, MB extends Monad<B, M>> extends 
      * @param <MC>  the {@link Monad} instance to return
      * @return the composition of the two arrows as a new {@link Kleisli} arrow
      */
+    @SuppressWarnings("overloads")
     default <C, MC extends Monad<C, M>> Kleisli<A, C, M, MC> andThen(Kleisli<B, C, M, MC> after) {
         return a -> apply(a).flatMap(after).coerce();
     }
@@ -37,6 +38,7 @@ public interface Kleisli<A, B, M extends Monad, MB extends Monad<B, M>> extends 
      * @param <MA>   the {@link Monad} instance to flatMap with this arrow
      * @return the composition of the two arrows as a new {@link Kleisli} arrow
      */
+    @SuppressWarnings("overloads")
     default <Z, MA extends Monad<A, M>> Kleisli<Z, B, M, MB> compose(Kleisli<Z, A, M, MA> before) {
         return z -> before.apply(z).flatMap(this).coerce();
     }
@@ -83,7 +85,7 @@ public interface Kleisli<A, B, M extends Monad, MB extends Monad<B, M>> extends 
      * @param <MB> the returned {@link Monad} instance
      * @return the function adapted as a {@link Kleisli} arrow
      */
-    static <A, B, M extends Monad, MB extends Monad<B, M>> Kleisli<A, B, M, MB> kleisli(
+    static <A, B, M extends Monad<?, M>, MB extends Monad<B, M>> Kleisli<A, B, M, MB> kleisli(
             Function<? super A, ? extends MB> fn) {
         return fn::apply;
     }
