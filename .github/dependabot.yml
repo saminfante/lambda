@@ -1,0 +1,22 @@
+version: 2
+registries:
+  git-github-com:
+    type: git
+    url: https://github.com
+    username: saminfante
+    password: "${{secrets.GIT_GITHUB_COM_PASSWORD}}"
+
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:49"
+    timezone: US/Central
+  open-pull-requests-limit: 99
+  ignore:
+  - dependency-name: org.apache.commons:commons-lang3
+    versions:
+    - "3.11"
+  registries:
+  - git-github-com
